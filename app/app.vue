@@ -20,16 +20,14 @@
       a.item Queue
     v-pages(:pages='pages', :activePage='currentPage')
       .page(slot='intro')
-        include intro.pug
+        include templates/intro.pug
       .page(slot='start')
-        include start.pug
+        include templates/start.pug
       .page(slot='try') Try It !
 </template>
 
 <script>
-import './intro.pug'
-import './start.pug'
-import Pages from './pages.vue'
+import Pages from './components/pages.vue'
 export default {
   name: 'App',
 
