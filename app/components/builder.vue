@@ -4,7 +4,7 @@
     .item(v-for='(items, idx) in list', @click='toggle(idx)')
       .header {{items.name}}
       transition(name='fade')
-        .menu(v-if='items.open')
+        .menu(v-if='idx == currentListIdx')
           a.item(v-for='item in items.list') {{item.name}}
   svg.edit-interface
 </template>
@@ -15,10 +15,10 @@ export default {
 
   data() {
     return {
+      currentListIdx: -1,
       list: [
         {
           name: 'Basic Op',
-          open: false,
           list: [
             { name: 'Placeholder' },
             { name: 'Constant' },
@@ -27,20 +27,31 @@ export default {
         },
         {
           name: 'Math Op',
-          open: false,
           list: [
             { name: 'Log' },
             { name: 'Matmul' },
             { name: 'Add' }
           ],
-        }
+        },
+        {
+          name: 'NN Op',
+          list: [
+            { name: 'Sigmoid' },
+            { name: 'Softmax' },
+            { name: 'Tanh' },
+          ],
+        },
       ]
     }
   },
 
   methods: {
     toggle(idx) {
-      this.$data.list[idx].open = !this.$data.list[idx].open
+      if (idx == this.$data.currentListIdx) {
+        this.$data.currentListIdx = -1
+      } else {
+        this.$data.currentListIdx = idx
+      }
     }
   },
 }
@@ -60,8 +71,11 @@ export default {
 .item
   font-size: 1.2em
 
-.fade-enter-active, .fade-leave-active
+.fade-enter-active
   transition: opacity .2s
+
+.fade-leave-active
+  transition: opacity .3s
 
 .fade-enter, .fade-leave-to
   opacity: 0
