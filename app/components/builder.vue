@@ -1,19 +1,48 @@
 <template lang="pug">
 .v-builder
   .ui.left.secondary.vertical.menu
-    a.item Basic Op
-    a.item Math Op
-    a.item NN Op
-    a.item Layers
-    a.item Dataset
-    a.item Queue
-    a.item Metrics
+    .item(v-for='(items, idx) in list', @click='toggle(idx)')
+      .header {{items.name}}
+      transition(name='fade')
+        .menu(v-if='items.open')
+          a.item(v-for='item in items.list') {{item.name}}
   svg.edit-interface
 </template>
 
 <script>
 export default {
   name: 'Builder',
+
+  data() {
+    return {
+      list: [
+        {
+          name: 'Basic Op',
+          open: false,
+          list: [
+            { name: 'Placeholder' },
+            { name: 'Constant' },
+            { name: 'Variable' },
+          ],
+        },
+        {
+          name: 'Math Op',
+          open: false,
+          list: [
+            { name: 'Log' },
+            { name: 'Matmul' },
+            { name: 'Add' }
+          ],
+        }
+      ]
+    }
+  },
+
+  methods: {
+    toggle(idx) {
+      this.$data.list[idx].open = !this.$data.list[idx].open
+    }
+  },
 }
 </script>
 
@@ -27,4 +56,15 @@ export default {
 
   .edit-interface
     flex: 1 1 auto
+
+.item
+  font-size: 1.2em
+
+.fade-enter-active, .fade-leave-active
+  transition: opacity .2s
+
+.fade-enter, .fade-leave-to
+  opacity: 0
+
+a.item
 </style>
