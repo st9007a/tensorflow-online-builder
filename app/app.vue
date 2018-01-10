@@ -53,12 +53,12 @@ export default {
 
   .ui.secondary.menu:first-child
     flex: 0 0 65px
-    margin-left: 1em
-    margin-right: 1em
+    margin: -2em 1em 0 1em
 
   .v-pages
     display: flex
     flex: 1 1 auto
+    margin-top: 3em
 
     .page
       flex: 1
