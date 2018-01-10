@@ -32,7 +32,7 @@ export default {
 
   data() {
     return {
-      currentPage: 'intro',
+      currentPage: 'try',
       pages: ['intro', 'start', 'try'],
     }
   },
@@ -46,11 +46,21 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-.ui.secondary.menu:first-child
-  margin-left: 1em
-  margin-right: 1em
+.v-app
+  display: flex
+  flex-direction: column
+  height: 100%
 
-.page
-  flex: 1 1 auto
+  .ui.secondary.menu:first-child
+    flex: 0 0 65px
+    margin-left: 1em
+    margin-right: 1em
+
+  .v-pages
+    display: flex
+    flex: 1 1 auto
+
+    .page
+      flex: 1
   padding: 3rem
 </style>
