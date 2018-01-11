@@ -7,11 +7,17 @@
         .menu(v-if='idx == currentListIdx')
           a.item(v-for='item in items.list') {{item.name}}
   svg.edit-interface
+    v-tensor(color='red')
 </template>
 
 <script>
+import Tensor from './tensor.vue'
 export default {
   name: 'Builder',
+
+  components: {
+    'v-tensor': Tensor,
+  },
 
   data() {
     return {
@@ -65,11 +71,12 @@ export default {
   .ui.menu
     flex: 0 0 210px
 
+    .item
+      font-size: 1.2em
+
   .edit-interface
     flex: 1 1 auto
 
-.item
-  font-size: 1.2em
 
 .fade-enter-active
   transition: opacity .2s
@@ -80,5 +87,4 @@ export default {
 .fade-enter, .fade-leave-to
   opacity: 0
 
-a.item
 </style>
