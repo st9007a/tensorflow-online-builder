@@ -5,9 +5,9 @@
       .header {{items.name}}
       transition(name='fade')
         .menu(v-if='idx == currentListIdx')
-          a.item(v-for='item in items.list') {{item.name}}
+          a.item(:data-type='item.name', v-for='item in items.list', @dblclick='createTensor') {{item.name}}
   svg.edit-interface
-    v-tensor(color='red')
+    .elem(v-for='elem in elements', :is='elem.type', color='red')
 </template>
 
 <script>
@@ -22,6 +22,7 @@ export default {
   data() {
     return {
       currentListIdx: -1,
+      elements: [],
       list: [
         {
           name: 'Basic Op',
@@ -58,7 +59,12 @@ export default {
       } else {
         this.$data.currentListIdx = idx
       }
-    }
+    },
+
+    createTensor() {
+      this.$set(this.$data.elements, this.$data.elements.length, {type: 'v-tensor'})
+    },
+
   },
 }
 </script>
@@ -70,9 +76,6 @@ export default {
 
   .ui.menu
     flex: 0 0 210px
-
-    .item
-      font-size: 1.2em
 
   .edit-interface
     flex: 1 1 auto
