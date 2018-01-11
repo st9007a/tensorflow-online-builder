@@ -84,6 +84,9 @@ export default {
   .edit-interface
     flex: 1 1 auto
 
+svg
+  border: 4px solid rgba(0, 0, 0, .8)
+  border-radius: 15px
 
 .fade-enter-active
   transition: opacity .2s

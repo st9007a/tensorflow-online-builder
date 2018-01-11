@@ -1,11 +1,10 @@
 <template lang="pug">
 g.v-tensor(:transform='pos')
   rect.tensor(
-    :stroke-dasharray='strokeStyle',
+    v-bind='strokeStyle',
     :fill='color',
-    :stroke='border',
     @mousedown='startMove',
-    @dblclick='focus',
+    @dblclick='highlight',
     stroke-width='5',
     rx='10',
     ry='10',
@@ -14,9 +13,7 @@ g.v-tensor(:transform='pos')
   )
   circle.in(cx='0', cy='30', r='5', stroke='black', fill='white', stroke-width='4')
   circle.out(cx='120', cy='30', r='5', stroke='black', fill='white', stroke-width='4')
-  <!-- g.meta -->
-  <!--   rect.props( x='&#45;30', y='&#45;150', width='100', height='300', fill='white', stroke='black') -->
-  <!--   text(contentEditable='true', x='10', y='20') test -->
+  <!-- path.flow(v&#45;if='connect', d='M124 30 L150 30', stroke='black', stroke&#45;width='5') -->
 </template>
 
 <script>
@@ -25,12 +22,6 @@ export default {
 
   props: ['color', 'border'],
 
-  computed: {
-    strokeStyle() {
-      return this.$data.highlight ? "10, 4" : "0, 0"
-    }
-  },
-
   data() {
     return {
       props: {
@@ -38,14 +29,35 @@ export default {
       },
       moving: false,
       pos: 'translate(10, 10)',
-      highlight: false
+      focus: false,
+      strokeStyle: {
+        'stroke-dasharray': '0, 0',
+        stroke: '',
+      },
+      connect: false,
     }
+  },
+
+  created() {
+    this.$data.strokeStyle.stroke = this.border
   },
 
   methods: {
 
-    focus() {
-      this.$data.highlight = !this.$data.highlight
+    highlight() {
+      if (!this.$data.focus) {
+        this.$data.strokeStyle = {
+          stroke: 'black',
+          'stroke-dasharray': '10, 4',
+        }
+      } else {
+        this.$data.strokeStyle = {
+          stroke: this.border,
+          'stroke-dasharray': '0, 0',
+        }
+      }
+
+      this.$data.focus = !this.$data.focus
     },
 
     startMove(e) {
