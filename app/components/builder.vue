@@ -7,7 +7,8 @@
         .menu(v-if='idx == currentListIdx')
           a.item(:data-type='item.name', v-for='item in items.list', @dblclick='createTensor') {{item.name}}
   svg.edit-interface
-    .elem(v-for='elem in elements', :is='elem.type', color='red')
+    v-tensor(color='#63b5b5')
+    .elem(v-for='elem in elements', :is='elem.type', color='#63b5b5')
 </template>
 
 <script>

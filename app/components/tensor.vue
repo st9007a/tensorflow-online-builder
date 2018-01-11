@@ -1,13 +1,19 @@
 <template lang="pug">
-rect.v-tensor(
-  v-bind='pos'
-  :fill='color',
-  @mousedown='startMove',
-  rx='10',
-  ry='10',
-  width='120',
-  height='60',
-)
+g.v-tensor(:transform='pos')
+  rect.tensor(
+    v-bind='highlight'
+    :fill='color',
+    @mousedown='startMove',
+    rx='10',
+    ry='10',
+    width='120',
+    height='60',
+  )
+  circle.in(cx='0', cy='30', r='5', stroke='black', fill='white', stroke-width='4')
+  circle.out(cx='120', cy='30', r='5', stroke='black', fill='white', stroke-width='4')
+  <!-- g.meta -->
+  <!--   rect.props( x='&#45;30', y='&#45;150', width='100', height='300', fill='white', stroke='black') -->
+  <!--   text(contentEditable='true', x='10', y='20') test -->
 </template>
 
 <script>
@@ -18,10 +24,15 @@ export default {
 
   data() {
     return {
+      props: {
+        name: '',
+      },
       moving: false,
-      pos: {
-        x: 0,
-        y: 0,
+      pos: 'translate(10, 10)',
+      highlight: {
+        stroke: '#1e8080',
+        'stroke-width': '5',
+        'stroke-dasharray': '10, 4',
       },
     }
   },
@@ -29,19 +40,19 @@ export default {
   methods: {
 
     startMove(e) {
-      const elem = e.currentTarget.closest('svg')
+      const elem = e.currentTarget.parentElement.closest('svg')
       const point = elem.createSVGPoint()
       const transform = elem.getScreenCTM().inverse()
 
       this.$data.moving = true
-      let newPt
 
       const updateFn = () => {
-        if (this.$data.moving) requestAnimationFrame(updateFn)
+        if (this.$data.moving) {
+          requestAnimationFrame(updateFn)
+        }
 
-        newPt = point.matrixTransform(transform)
-        this.$data.pos.x = newPt.x - 60
-        this.$data.pos.y = newPt.y - 30
+        const newPt = point.matrixTransform(transform)
+        this.$data.pos = `translate(${newPt.x - 60}, ${newPt.y - 30})`
       }
 
       const moveFn = (evt) => {
@@ -49,10 +60,11 @@ export default {
         point.y = evt.clientY
       }
 
-      const stopFn = (e) => {
+      const stopFn = (evt) => {
         this.$data.moving = false
         elem.removeEventListener('mousemove', moveFn)
         elem.removeEventListener('mouseup', stopFn)
+        elem.removeEventListener('mouseleave', stopFn)
       }
 
       requestAnimationFrame(updateFn)
@@ -60,6 +72,7 @@ export default {
 
       elem.addEventListener('mousemove', moveFn)
       elem.addEventListener('mouseup', stopFn)
+      elem.addEventListener('mouseleave', stopFn)
     },
 
   },
