@@ -7,8 +7,8 @@
         .menu(v-if='idx == currentListIdx')
           a.item(:data-type='item.name', v-for='item in items.list', @dblclick='createTensor') {{item.name}}
   svg.edit-interface
-    v-tensor(color='#63b5b5')
-    .elem(v-for='elem in elements', :is='elem.type', color='#63b5b5')
+    v-tensor(color='#63b5b5', border='#1e8080')
+    .elem(v-for='elem in elements', :is='elem.type', color='#63b5b5', border='#1e8080')
 </template>
 
 <script>
@@ -74,6 +74,9 @@ export default {
 .v-builder
   height: 100%
   display: flex
+
+  *
+    user-select: none
 
   .ui.menu
     flex: 0 0 210px

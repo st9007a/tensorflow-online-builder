@@ -1,9 +1,12 @@
 <template lang="pug">
 g.v-tensor(:transform='pos')
   rect.tensor(
-    v-bind='highlight'
+    :stroke-dasharray='strokeStyle',
     :fill='color',
+    :stroke='border',
     @mousedown='startMove',
+    @dblclick='focus',
+    stroke-width='5',
     rx='10',
     ry='10',
     width='120',
@@ -20,7 +23,13 @@ g.v-tensor(:transform='pos')
 export default {
   name: 'Tensor',
 
-  props: ['color'],
+  props: ['color', 'border'],
+
+  computed: {
+    strokeStyle() {
+      return this.$data.highlight ? "10, 4" : "0, 0"
+    }
+  },
 
   data() {
     return {
@@ -29,15 +38,15 @@ export default {
       },
       moving: false,
       pos: 'translate(10, 10)',
-      highlight: {
-        stroke: '#1e8080',
-        'stroke-width': '5',
-        'stroke-dasharray': '10, 4',
-      },
+      highlight: false
     }
   },
 
   methods: {
+
+    focus() {
+      this.$data.highlight = !this.$data.highlight
+    },
 
     startMove(e) {
       const elem = e.currentTarget.parentElement.closest('svg')

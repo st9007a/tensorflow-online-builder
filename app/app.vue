@@ -55,6 +55,9 @@ export default {
     flex: 0 0 65px
     margin: -2em 1em 0 1em
 
+    *
+      user-select: none
+
   .v-pages
     display: flex
     flex: 1 1 auto
