@@ -5,7 +5,7 @@
       .header {{items.name}}
       transition(name='fade')
         .menu(v-if='idx == currentListIdx')
-          a.item(:data-type='item.name', v-for='item in items.list', @dblclick='createTensor') {{item.name}}
+          a.item(v-for='item in items.list', @dblclick='createTensor(item.name)') {{item.name}}
   svg.edit-interface
     v-tensor(color='#63b5b5', border='#1e8080', :width='120', :height='60', :inCount='0', :outCount='1', name='Const_1')
     .elem(
@@ -73,17 +73,17 @@ export default {
       }
     },
 
-    createTensor() {
-      const { Constant } = tensorConfig
+    createTensor(name) {
+      const config = tensorConfig[name]
       this.$set(this.$data.elements, this.$data.elements.length, {
         type: 'v-tensor',
-        width: Constant.width,
-        height: Constant.height,
-        inCount: Constant.inCount,
-        outCount: Constant.outCount,
-        color: Constant.color,
-        border: Constant.border,
-        name: Constant.name,
+        width: config.width,
+        height: config.height,
+        inCount: config.inCount,
+        outCount: config.outCount,
+        color: config.color,
+        border: config.border,
+        name: config.name,
       })
     },
 
