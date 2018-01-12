@@ -7,7 +7,7 @@
         .menu(v-if='idx == currentListIdx')
           a.item(:data-type='item.name', v-for='item in items.list', @dblclick='createTensor') {{item.name}}
   svg.edit-interface
-    v-tensor(color='#63b5b5', border='#1e8080', :width='120', :height='60', :inCount='0', :outCount='1')
+    v-tensor(color='#63b5b5', border='#1e8080', :width='120', :height='60', :inCount='0', :outCount='1', name='Const_1')
     .elem(
       v-for='elem in elements',
       :is='elem.type',
@@ -17,6 +17,7 @@
       :height='elem.height',
       :inCount='elem.inCount',
       :outCount='elem.outCount',
+      :name='elem.name',
     )
 </template>
 
@@ -82,6 +83,7 @@ export default {
         outCount: Constant.outCount,
         color: Constant.color,
         border: Constant.border,
+        name: Constant.name,
       })
     },
 

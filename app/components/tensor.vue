@@ -1,27 +1,26 @@
 <template lang="pug">
 g.v-tensor(:transform='pos')
-  rect.tensor(
-    v-bind='strokeStyle',
-    :fill='color',
-    :width='width',
-    :height='height',
-    @mousedown='startMove',
-    @dblclick='highlight',
-    stroke-width='5',
-    rx='10',
-    ry='10',
-  )
+  g(@mousedown='startMove', @dblclick='highlight')
+    rect.tensor(
+      v-bind='strokeStyle',
+      :fill='color',
+      :width='width',
+      :height='height',
+      stroke-width='5',
+      rx='10',
+      ry='10',
+    )
+    text(x='30', y='37.5', font-weight='bold', font-size='20') {{name}}
   circle.in(v-for='(n, idx) in inCount', cx='0', :cy='posY(inCount, idx)', r='5', stroke='black', fill='white', stroke-width='4')
   circle.out(v-for='(n, idx) in outCount', :cx='width', :cy='posY(outCount, idx)', r='5', stroke='black', fill='white', stroke-width='4')
-  text(x='30', y='37.5', font-weight='bold', font-size='20') Const_1
-  <!-- path.flow(v&#45;if='connect', d='M124 30 L150 30', stroke='black', stroke&#45;width='5') -->
+  path.flow(v-if='connect', d='M124 30 L150 30', stroke='black', stroke-width='5')
 </template>
 
 <script>
 export default {
   name: 'Tensor',
 
-  props: ['color', 'border', 'width', 'height', 'inCount', 'outCount'],
+  props: ['name', 'color', 'border', 'width', 'height', 'inCount', 'outCount'],
 
   data() {
     return {
@@ -41,6 +40,7 @@ export default {
 
   created() {
     this.$data.strokeStyle.stroke = this.border
+    this.$data.props.name = this.name
   },
 
   methods: {
