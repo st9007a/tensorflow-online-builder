@@ -31,9 +31,16 @@ export default {
     'v-tensor': Tensor,
   },
 
+  created() {
+    for (const name in tensorConfig) {
+      this.$set(this.$data.count, name, 0)
+    }
+  },
+
   data() {
     return {
       currentListIdx: -1,
+      count: {},
       elements: [],
       list: [
         {
@@ -83,7 +90,7 @@ export default {
         outCount: config.outCount,
         color: config.color,
         border: config.border,
-        name: config.name,
+        name: config.name + '_' + (++this.$data.count[name]),
       })
     },
 
