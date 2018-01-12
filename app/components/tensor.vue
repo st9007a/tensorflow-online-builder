@@ -3,16 +3,16 @@ g.v-tensor(:transform='pos')
   rect.tensor(
     v-bind='strokeStyle',
     :fill='color',
+    :width='width',
+    :height='height',
     @mousedown='startMove',
     @dblclick='highlight',
     stroke-width='5',
     rx='10',
     ry='10',
-    width='120',
-    height='60',
   )
-  circle.in(cx='0', cy='30', r='5', stroke='black', fill='white', stroke-width='4')
-  circle.out(cx='120', cy='30', r='5', stroke='black', fill='white', stroke-width='4')
+  circle.in(v-for='(n, idx) in inCount', cx='0', :cy='posY(inCount, idx)', r='5', stroke='black', fill='white', stroke-width='4')
+  circle.out(v-for='(n, idx) in outCount', :cx='width', :cy='posY(outCount, idx)', r='5', stroke='black', fill='white', stroke-width='4')
   <!-- path.flow(v&#45;if='connect', d='M124 30 L150 30', stroke='black', stroke&#45;width='5') -->
 </template>
 
@@ -20,7 +20,7 @@ g.v-tensor(:transform='pos')
 export default {
   name: 'Tensor',
 
-  props: ['color', 'border'],
+  props: ['color', 'border', 'width', 'height', 'inCount', 'outCount'],
 
   data() {
     return {
@@ -94,6 +94,10 @@ export default {
       elem.addEventListener('mousemove', moveFn)
       elem.addEventListener('mouseup', stopFn)
       elem.addEventListener('mouseleave', stopFn)
+    },
+
+    posY(total, idx) {
+      return this.height / (total + 1) * (idx + 1)
     },
 
   },
