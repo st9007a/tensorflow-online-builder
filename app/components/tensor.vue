@@ -13,6 +13,7 @@ g.v-tensor(:transform='pos')
   )
   circle.in(v-for='(n, idx) in inCount', cx='0', :cy='posY(inCount, idx)', r='5', stroke='black', fill='white', stroke-width='4')
   circle.out(v-for='(n, idx) in outCount', :cx='width', :cy='posY(outCount, idx)', r='5', stroke='black', fill='white', stroke-width='4')
+  text(x='30', y='37.5', font-weight='bold', font-size='20') Const_1
   <!-- path.flow(v&#45;if='connect', d='M124 30 L150 30', stroke='black', stroke&#45;width='5') -->
 </template>
 

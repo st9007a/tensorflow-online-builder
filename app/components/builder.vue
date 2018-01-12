@@ -7,11 +7,21 @@
         .menu(v-if='idx == currentListIdx')
           a.item(:data-type='item.name', v-for='item in items.list', @dblclick='createTensor') {{item.name}}
   svg.edit-interface
-    v-tensor(color='#63b5b5', border='#1e8080', width='120', height='60', :inCount='0', :outCount='1')
-    .elem(v-for='elem in elements', :is='elem.type', color='#63b5b5', border='#1e8080', width='120', height='60', :inCount='0', :outCount='1')
+    v-tensor(color='#63b5b5', border='#1e8080', :width='120', :height='60', :inCount='0', :outCount='1')
+    .elem(
+      v-for='elem in elements',
+      :is='elem.type',
+      :color='elem.color',
+      :border='elem.border',
+      :width='elem.width',
+      :height='elem.height',
+      :inCount='elem.inCount',
+      :outCount='elem.outCount',
+    )
 </template>
 
 <script>
+import tensorConfig from '../res/tensor.config.json'
 import Tensor from './tensor.vue'
 export default {
   name: 'Builder',
@@ -63,7 +73,16 @@ export default {
     },
 
     createTensor() {
-      this.$set(this.$data.elements, this.$data.elements.length, {type: 'v-tensor'})
+      const { Constant } = tensorConfig
+      this.$set(this.$data.elements, this.$data.elements.length, {
+        type: 'v-tensor',
+        width: Constant.width,
+        height: Constant.height,
+        inCount: Constant.inCount,
+        outCount: Constant.outCount,
+        color: Constant.color,
+        border: Constant.border,
+      })
     },
 
   },

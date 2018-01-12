@@ -1,0 +1,10 @@
+{
+  "Constant": {
+    "border": "#1e8080",
+    "color": "#63b5b5",
+    "height": 60,
+    "inCount": 0,
+    "outCount": 1,
+    "width": 120
+  }
+}
