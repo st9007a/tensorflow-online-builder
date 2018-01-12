@@ -11,9 +11,26 @@ g.v-tensor(:transform='pos')
       ry='10',
     )
     text(x='30', y='37.5', font-weight='bold', font-size='20') {{name}}
-  circle.in(v-for='(n, idx) in inCount', cx='0', :cy='posY(inCount, idx)', r='5', stroke='black', fill='white', stroke-width='4')
-  circle.out(v-for='(n, idx) in outCount', :cx='width', :cy='posY(outCount, idx)', r='5', stroke='black', fill='white', stroke-width='4')
-  path.flow(v-if='connect', d='M124 30 L150 30', stroke='black', stroke-width='5')
+  circle.in(
+    v-for='(n, idx) in inCount',
+    :cy='posY(inCount, idx)',
+    @click='clickInput',
+    cx='0',
+    r='5',
+    fill='white',
+    stroke='black',
+    stroke-width='4'
+  )
+  circle.out(
+    v-for='(n, idx) in outCount',
+    :cx='width',
+    :cy='posY(outCount, idx)',
+    @click='clickOutput',
+    r='5',
+    fill='white',
+    stroke='black',
+    stroke-width='4'
+  )
 </template>
 
 <script>
@@ -34,7 +51,6 @@ export default {
         'stroke-dasharray': '0, 0',
         stroke: '',
       },
-      connect: false,
     }
   },
 
@@ -74,7 +90,12 @@ export default {
         }
 
         const newPt = point.matrixTransform(transform)
-        this.$data.pos = `translate(${newPt.x - 60}, ${newPt.y - 30})`
+        this.$data.pos = `translate(${newPt.x - this.width / 2}, ${newPt.y - this.height / 2})`
+        this.$emit('move', {
+          name: this.$data.props.name,
+          x: newPt.x - this.width / 2,
+          y: newPt.y - this.height/ 2,
+        })
       }
 
       const moveFn = (evt) => {
@@ -99,6 +120,14 @@ export default {
 
     posY(total, idx) {
       return this.height / (total + 1) * (idx + 1)
+    },
+
+    clickInput() {
+      this.$emit('onClickInput')
+    },
+
+    clickOutput() {
+      this.$emit('onClickOutput')
     },
 
   },

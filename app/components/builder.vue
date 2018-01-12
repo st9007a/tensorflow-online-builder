@@ -7,9 +7,10 @@
         .menu(v-if='idx == currentListIdx')
           a.item(v-for='item in items.list', @dblclick='createTensor(item.name)') {{item.name}}
   svg.edit-interface
-    v-tensor(color='#63b5b5', border='#1e8080', :width='120', :height='60', :inCount='0', :outCount='1', name='Const_1')
-    .elem(
-      v-for='elem in elements',
+    v-tensor(color='#63b5b5', border='#1e8080', :width='120', :height='60', :inCount='0', :outCount='1', name='Const_1', @move='reDrawPath')
+    v-flow
+    .tensor(
+      v-for='(elem, name) in elements',
       :is='elem.type',
       :color='elem.color',
       :border='elem.border',
@@ -17,17 +18,19 @@
       :height='elem.height',
       :inCount='elem.inCount',
       :outCount='elem.outCount',
-      :name='elem.name',
+      :name='name',
     )
 </template>
 
 <script>
 import tensorConfig from '../res/tensor.config.json'
 import Tensor from './tensor.vue'
+import Flow from './flow.vue'
 export default {
   name: 'Builder',
 
   components: {
+    'v-flow': Flow,
     'v-tensor': Tensor,
   },
 
@@ -41,7 +44,7 @@ export default {
     return {
       currentListIdx: -1,
       count: {},
-      elements: [],
+      elements: {},
       list: [
         {
           name: 'Basic Op',
@@ -82,7 +85,7 @@ export default {
 
     createTensor(name) {
       const config = tensorConfig[name]
-      this.$set(this.$data.elements, this.$data.elements.length, {
+      this.$set(this.$data.elements, config.name + '_' + (++this.$data.count[name]), {
         type: 'v-tensor',
         width: config.width,
         height: config.height,
@@ -90,8 +93,11 @@ export default {
         outCount: config.outCount,
         color: config.color,
         border: config.border,
-        name: config.name + '_' + (++this.$data.count[name]),
       })
+    },
+
+    reDrawPath(info) {
+      console.log(info)
     },
 
   },
