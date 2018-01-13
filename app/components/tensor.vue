@@ -10,7 +10,7 @@ g.v-tensor(:transform='pos')
       rx='10',
       ry='10',
     )
-    text(x='30', y='37.5', font-weight='bold', font-size='20') {{name}}
+    text(ref='text', v-bind='fontStyle', font-weight='bold') {{props.name}}
   circle.in(
     v-for='(n, idx) in inCount',
     :cy='posY(inCount, idx)',
@@ -41,12 +41,17 @@ export default {
 
   data() {
     return {
-      props: {
-        name: '',
+      focus: false,
+      fontStyle: {
+        'font-size': 20,
+        x: 0,
+        y: 0,
       },
       moving: false,
       pos: 'translate(10, 10)',
-      focus: false,
+      props: {
+        name: '',
+      },
       strokeStyle: {
         'stroke-dasharray': '0, 0',
         stroke: '',
@@ -57,6 +62,14 @@ export default {
   created() {
     this.$data.strokeStyle.stroke = this.border
     this.$data.props.name = this.name
+  },
+
+  mounted() {
+    if (this.$refs.text.getBBox().width >= this.width * 2 / 3) {
+      this.$data.fontStyle['font-size'] = 20 * this.width * 2 / 3 / this.$refs.text.getBBox().width
+    }
+    this.$data.fontStyle.x = (this.width - this.$refs.text.getBBox().width) / 2 + 5
+    this.$data.fontStyle.y = (this.height - 5) / 2 + this.$refs.text.getBBox().height / 2
   },
 
   methods: {
