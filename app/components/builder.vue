@@ -1,13 +1,13 @@
 <template lang="pug">
 .v-builder
   .ui.left.secondary.vertical.menu
-    .item(v-for='(items, idx) in list', @click='toggle(idx)')
-      .header {{items.name}}
+    .item(v-for='(cls, idx) in list', @click='toggle(idx)')
+      .header {{cls.name}}
       transition(name='fade')
         .menu(v-if='idx == currentListIdx')
-          a.item(v-for='item in items.list', @dblclick='createTensor(item.name)') {{item.name}}
+          a.item(v-for='item in cls.list', @dblclick='createTensor(item.name)') {{item.name}}
   svg.edit-interface
-    v-tensor(color='#63b5b5', border='#1e8080', :width='120', :height='60', :inCount='0', :outCount='1', name='Const_1', @move='reDrawPath')
+    v-tensor(color='#63b5b5', border='#1e8080', :width='120', :height='60', :inCount='0', :outCount='1', name='Const_1', @move='reDrawPath', :x='10', :y='10')
     v-flow(:startX='120', :startY='30', :endX='120', :endY='150')
     .tensor(
       is='v-tensor',
@@ -19,6 +19,8 @@
       :inCount='t.inCount',
       :outCount='t.outCount',
       :name='name',
+      :x='10',
+      :y='10',
       @move='reDrawPath',
     )
 </template>

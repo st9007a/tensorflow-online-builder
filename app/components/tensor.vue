@@ -37,7 +37,7 @@ g.v-tensor(:transform='pos')
 export default {
   name: 'Tensor',
 
-  props: ['name', 'color', 'border', 'width', 'height', 'inCount', 'outCount'],
+  props: ['name', 'color', 'border', 'width', 'height', 'inCount', 'outCount', 'x', 'y'],
 
   data() {
     return {
@@ -62,14 +62,17 @@ export default {
   created() {
     this.$data.strokeStyle.stroke = this.border
     this.$data.props.name = this.name
+    this.$data.pos = `translate(${this.x}, ${this.y})`
   },
 
   mounted() {
-    if (this.$refs.text.getBBox().width >= this.width * 2 / 3) {
-      this.$data.fontStyle['font-size'] = 20 * this.width * 2 / 3 / this.$refs.text.getBBox().width
+    let { width, height } = this.$refs.text.getBBox()
+    if (width > this.width * 5 / 6) {
+      this.$set(this.$data.fontStyle, 'font-size', 20 * this.width * 5 / 6 / width)
+      width = this.width * 5 / 6
     }
-    this.$data.fontStyle.x = (this.width - this.$refs.text.getBBox().width) / 2 + 5
-    this.$data.fontStyle.y = (this.height - 5) / 2 + this.$refs.text.getBBox().height / 2
+    this.$data.fontStyle.x = (this.width - width) / 2 + 5
+    this.$data.fontStyle.y = (this.height - 5) / 2 + height / 2
   },
 
   methods: {
@@ -107,7 +110,7 @@ export default {
         this.$emit('move', {
           name: this.$data.props.name,
           x: newPt.x - this.width / 2,
-          y: newPt.y - this.height/ 2,
+          y: newPt.y - this.height / 2,
         })
       }
 
