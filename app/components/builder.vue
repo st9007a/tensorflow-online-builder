@@ -8,17 +8,18 @@
           a.item(v-for='item in items.list', @dblclick='createTensor(item.name)') {{item.name}}
   svg.edit-interface
     v-tensor(color='#63b5b5', border='#1e8080', :width='120', :height='60', :inCount='0', :outCount='1', name='Const_1', @move='reDrawPath')
-    v-flow
+    v-flow(:startX='120', :startY='30', :endX='120', :endY='150')
     .tensor(
-      v-for='(elem, name) in elements',
-      :is='elem.type',
-      :color='elem.color',
-      :border='elem.border',
-      :width='elem.width',
-      :height='elem.height',
-      :inCount='elem.inCount',
-      :outCount='elem.outCount',
+      is='v-tensor',
+      v-for='(t, name) in tensors',
+      :color='t.color',
+      :border='t.border',
+      :width='t.width',
+      :height='t.height',
+      :inCount='t.inCount',
+      :outCount='t.outCount',
       :name='name',
+      @move='reDrawPath',
     )
 </template>
 
@@ -44,7 +45,8 @@ export default {
     return {
       currentListIdx: -1,
       count: {},
-      elements: {},
+      tensors: {},
+      flow: {},
       list: [
         {
           name: 'Basic Op',
@@ -75,6 +77,7 @@ export default {
   },
 
   methods: {
+
     toggle(idx) {
       if (idx == this.$data.currentListIdx) {
         this.$data.currentListIdx = -1
@@ -85,8 +88,7 @@ export default {
 
     createTensor(name) {
       const config = tensorConfig[name]
-      this.$set(this.$data.elements, config.name + '_' + (++this.$data.count[name]), {
-        type: 'v-tensor',
+      this.$set(this.$data.tensors, config.name + '_' + (++this.$data.count[name]), {
         width: config.width,
         height: config.height,
         inCount: config.inCount,
@@ -97,7 +99,7 @@ export default {
     },
 
     reDrawPath(info) {
-      console.log(info)
+      console.log(this.$data.tensors[info.name])
     },
 
   },
