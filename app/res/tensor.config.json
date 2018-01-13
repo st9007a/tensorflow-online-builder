@@ -7,5 +7,14 @@
     "name": "Const",
     "outCount": 1,
     "width": 120
+  },
+  "Matmul": {
+    "border": "#d57e32",
+    "color": "#ffba7e",
+    "height": 90,
+    "inCount": 2,
+    "name": "Matmul",
+    "outCount": 1,
+    "width": 120
   }
 }
