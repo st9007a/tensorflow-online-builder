@@ -139,11 +139,11 @@ export default {
     },
 
     clickInput() {
-      this.$emit('onClickInput')
+      this.$emit('onClickInput', {})
     },
 
     clickOutput() {
-      this.$emit('onClickOutput')
+      this.$emit('onClickOutput', {})
     },
 
   },

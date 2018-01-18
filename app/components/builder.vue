@@ -7,8 +7,14 @@
         .menu(v-if='idx == currentListIdx')
           a.item(v-for='item in cls.list', @dblclick='createTensor(item.name)') {{item.name}}
   svg.edit-interface
-    v-tensor(color='#63b5b5', border='#1e8080', :width='120', :height='60', :inCount='0', :outCount='1', name='Const_1', @move='reDrawPath', :x='10', :y='10')
-    v-flow(:startX='120', :startY='30', :endX='120', :endY='150')
+    .flow(
+      is='v-flow',
+      v-for='(f, name) in flows',
+      :startX='f.startX',
+      :startY='f.startY',
+      :endX='f.endX',
+      :endY='f.endY',
+    )
     .tensor(
       is='v-tensor',
       v-for='(t, name) in tensors',
@@ -19,9 +25,11 @@
       :inCount='t.inCount',
       :outCount='t.outCount',
       :name='name',
-      :x='10',
-      :y='10',
+      :x='t.x',
+      :y='t.y',
       @move='reDrawPath',
+      @onClickInput='drawPath',
+      @onClickOutput='drawPath',
     )
 </template>
 
@@ -47,8 +55,26 @@ export default {
     return {
       currentListIdx: -1,
       count: {},
-      tensors: {},
-      flow: {},
+      tensors: {
+        Const_2: {
+          x: 10,
+          y: 10,
+          color: '#63b5b5',
+          border: '#1e8080',
+          width: 120,
+          height: 60,
+          inCount: 0,
+          outCount: 1,
+        },
+      },
+      flows: {
+        flow_1: {
+          startX: 10,
+          startY: 10,
+          endX: 200,
+          endY: 200,
+        },
+      },
       list: [
         {
           name: 'Basic Op',
@@ -97,11 +123,15 @@ export default {
         outCount: config.outCount,
         color: config.color,
         border: config.border,
+        x: 10,
+        y: 10,
       })
     },
 
+    drawPath(pos) {
+    },
+
     reDrawPath(info) {
-      console.log(this.$data.tensors[info.name])
     },
 
   },
