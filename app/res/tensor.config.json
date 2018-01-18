@@ -6,6 +6,10 @@
     "inCount": 0,
     "name": "Const",
     "outCount": 1,
+    "pos": {
+      "x": 10,
+      "y": 10
+    },
     "width": 120
   },
   "Matmul": {
@@ -15,6 +19,10 @@
     "inCount": 2,
     "name": "Matmul",
     "outCount": 1,
+    "pos": {
+      "x": 10,
+      "y": 10
+    },
     "width": 120
   }
 }

@@ -14,7 +14,7 @@ g.v-tensor(:transform='pos')
   circle.in(
     v-for='(n, idx) in inCount',
     :cy='posY(inCount, idx)',
-    @click='clickInput',
+    @click='clickPoint($event, idx, "in")',
     cx='0',
     r='5',
     fill='white',
@@ -25,7 +25,7 @@ g.v-tensor(:transform='pos')
     v-for='(n, idx) in outCount',
     :cx='width',
     :cy='posY(outCount, idx)',
-    @click='clickOutput',
+    @click='clickPoint($event, idx, "out")',
     r='5',
     fill='white',
     stroke='black',
@@ -37,7 +37,7 @@ g.v-tensor(:transform='pos')
 export default {
   name: 'Tensor',
 
-  props: ['name', 'color', 'border', 'width', 'height', 'inCount', 'outCount', 'x', 'y'],
+  props: ['name', 'color', 'border', 'width', 'height', 'inCount', 'outCount', 'value'],
 
   data() {
     return {
@@ -62,7 +62,7 @@ export default {
   created() {
     this.$data.strokeStyle.stroke = this.border
     this.$data.props.name = this.name
-    this.$data.pos = `translate(${this.x}, ${this.y})`
+    this.$data.pos = `translate(${this.value.x}, ${this.value.y})`
   },
 
   mounted() {
@@ -109,6 +109,8 @@ export default {
         this.$data.pos = `translate(${newPt.x - this.width / 2}, ${newPt.y - this.height / 2})`
         this.$emit('move', {
           name: this.$data.props.name,
+        })
+        this.$emit('input', {
           x: newPt.x - this.width / 2,
           y: newPt.y - this.height / 2,
         })
@@ -138,12 +140,14 @@ export default {
       return this.height / (total + 1) * (idx + 1)
     },
 
-    clickInput() {
-      this.$emit('onClickInput', {})
-    },
-
-    clickOutput() {
-      this.$emit('onClickOutput', {})
+    clickPoint(e, idx, type) {
+      const rect = e.currentTarget.getBBox()
+      this.$emit('onClickInput', {
+        name: this.$data.props.name,
+        type: type,
+        x: rect.x,
+        y: rect.y,
+      })
     },
 
   },

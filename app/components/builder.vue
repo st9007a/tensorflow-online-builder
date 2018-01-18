@@ -18,6 +18,7 @@
     .tensor(
       is='v-tensor',
       v-for='(t, name) in tensors',
+      v-model='t.pos',
       :color='t.color',
       :border='t.border',
       :width='t.width',
@@ -25,8 +26,6 @@
       :inCount='t.inCount',
       :outCount='t.outCount',
       :name='name',
-      :x='t.x',
-      :y='t.y',
       @move='reDrawPath',
       @onClickInput='drawPath',
       @onClickOutput='drawPath',
@@ -56,19 +55,21 @@ export default {
       currentListIdx: -1,
       count: {},
       tensors: {
-        Const_2: {
-          x: 10,
-          y: 10,
+        Const_0: {
           color: '#63b5b5',
           border: '#1e8080',
           width: 120,
           height: 60,
           inCount: 0,
           outCount: 1,
+          pos: {
+            x: 10,
+            y: 10,
+          },
         },
       },
       flows: {
-        flow_1: {
+        flow_0: {
           startX: 10,
           startY: 10,
           endX: 200,
@@ -117,22 +118,26 @@ export default {
     createTensor(name) {
       const config = tensorConfig[name]
       this.$set(this.$data.tensors, config.name + '_' + (++this.$data.count[name]), {
-        width: config.width,
+        border: config.border,
+        color: config.color,
         height: config.height,
         inCount: config.inCount,
         outCount: config.outCount,
-        color: config.color,
-        border: config.border,
-        x: 10,
-        y: 10,
+        pos: {
+          x: config.pos.x,
+          y: config.pos.y,
+        },
+        width: config.width,
       })
     },
 
     drawPath(pos) {
+      this.$set(this.$data.flows, 'flow_' + (++this.$data.count.flow), {})
     },
 
     reDrawPath(info) {
-    },
+    }
+
 
   },
 }
