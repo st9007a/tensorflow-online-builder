@@ -141,8 +141,17 @@ export default {
     },
 
     clickPoint(e, idx, type) {
-      const rect = e.currentTarget.getBBox()
-      this.$emit('onClickInput', {
+      const svgRoot = e.currentTarget.closest('svg')
+      const point = svgRoot.createSVGPoint()
+      const ctm = svgRoot.getScreenCTM()
+
+      point.x = e.clientX
+      point.y = e.clientY
+
+      const rect = point.matrixTransform(ctm.inverse())
+
+      this.$emit('onClickPoint', {
+        idx: idx,
         name: this.$data.props.name,
         type: type,
         x: rect.x,

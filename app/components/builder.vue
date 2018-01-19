@@ -10,10 +10,10 @@
     .flow(
       is='v-flow',
       v-for='(f, name) in flows',
-      :startX='f.startX',
-      :startY='f.startY',
-      :endX='f.endX',
-      :endY='f.endY',
+      :startX='f.start.x',
+      :startY='f.start.y',
+      :endX='f.end.x',
+      :endY='f.end.y',
     )
     .tensor(
       is='v-tensor',
@@ -27,8 +27,7 @@
       :outCount='t.outCount',
       :name='name',
       @move='reDrawPath',
-      @onClickInput='drawPath',
-      @onClickOutput='drawPath',
+      @onClickPoint='drawPath',
     )
 </template>
 
@@ -53,7 +52,10 @@ export default {
   data() {
     return {
       currentListIdx: -1,
-      count: {},
+      count: {
+        flow: 0,
+      },
+      createFlow: '',
       tensors: {
         Const_0: {
           color: '#63b5b5',
@@ -67,13 +69,33 @@ export default {
             y: 10,
           },
         },
+        Matmul_0: {
+          color: '#ffba7e',
+          border: '#d57e32',
+          width: 120,
+          height: 90,
+          inCount: 2,
+          outCount: 1,
+          pos: {
+            x: 250,
+            y: 20,
+          },
+        },
       },
       flows: {
         flow_0: {
-          startX: 10,
-          startY: 10,
-          endX: 200,
-          endY: 200,
+          end: {
+            name: 'Matmul_0',
+            idx: 0,
+            x: 200,
+            y: 200,
+          },
+          start: {
+            name: 'Const_0',
+            idx: 0,
+            x: 10,
+            y: 10,
+          },
         },
       },
       list: [
@@ -132,7 +154,14 @@ export default {
     },
 
     drawPath(pos) {
-      this.$set(this.$data.flows, 'flow_' + (++this.$data.count.flow), {})
+      // return
+      const flowName = this.$data.createFlow === '' ? 'flow_' + (++this.$data.count.flow) : this.$data.createFlow
+      this.$data.createFlow = this.$data.createFlow === '' ? flowName : ''
+      let flowConfig = {
+        start: this.$data.createFlow === '' ? this.$data.flows[flowName].start : { x: pos.x, y: pos.y },
+        end: { x: pos.x, y: pos.y },
+      }
+      this.$set(this.$data.flows, flowName, flowConfig)
     },
 
     reDrawPath(info) {
