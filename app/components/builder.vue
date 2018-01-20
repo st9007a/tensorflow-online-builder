@@ -7,14 +7,6 @@
         .menu(v-if='idx == currentListIdx')
           a.item(v-for='item in cls.list', @dblclick='createTensor(item.name)') {{item.name}}
   svg.edit-interface
-    .flow(
-      is='v-flow',
-      v-for='(f, name) in flows',
-      :startX='f.start.x',
-      :startY='f.start.y',
-      :endX='f.end.x',
-      :endY='f.end.y',
-    )
     .tensor(
       is='v-tensor',
       v-for='(t, name) in tensors',
@@ -28,6 +20,14 @@
       :name='name',
       @move='reDrawPath',
       @onClickPoint='drawPath',
+    )
+    .flow(
+      is='v-flow',
+      v-for='(f, name) in flows',
+      :startX='f.start.x',
+      :startY='f.start.y',
+      :endX='f.end.x',
+      :endY='f.end.y',
     )
 </template>
 
@@ -55,7 +55,14 @@ export default {
       count: {
         flow: 0,
       },
-      createFlow: '',
+      createFlow: {
+        activate: false,
+        name: '',
+        startAt: {
+          tensor: '',
+          type: '',
+        },
+      },
       tensors: {
         Const_0: {
           color: '#63b5b5',
@@ -139,8 +146,19 @@ export default {
     },
 
     drawPath(pos) {
-      const flowName = this.$data.createFlow === '' ? 'flow_' + (++this.$data.count.flow) : this.$data.createFlow
-      this.$data.createFlow = this.$data.createFlow === '' ? flowName : ''
+      if (!this.$data.createFlow.activate) {
+        this.$set(this.$data.createFlow, 'activate', true)
+        this.$set(this.$data.createFlow, 'name', 'flow_' + (++this.$data.count.flow))
+        this.$set(this.$data.createFlow, 'startAt', { type: pos.type, tensor: pos.name })
+      } else if (pos.type === this.$data.createFlow.startAt.type || pos.name === this.$data.createFlow.startAt.tensor) {
+        this.$delete(this.$data.flows, this.$data.createFlow.name)
+        this.$set(this.$data.createFlow, 'activate', false)
+        return
+      } else {
+        this.$set(this.$data.createFlow, 'activate', false)
+      }
+
+      const { name: flowName } = this.$data.createFlow
 
       const flowConfig = {
         idx: pos.idx,
@@ -151,7 +169,7 @@ export default {
       }
 
       this.$set(this.$data.flows, flowName, {
-        start: this.$data.createFlow === '' ? this.$data.flows[flowName].start : flowConfig,
+        start: !this.$data.createFlow.activate ? this.$data.flows[flowName].start : flowConfig,
         end: flowConfig,
       })
     },
