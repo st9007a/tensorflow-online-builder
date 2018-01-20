@@ -82,22 +82,7 @@ export default {
           },
         },
       },
-      flows: {
-        flow_0: {
-          end: {
-            name: 'Matmul_0',
-            idx: 0,
-            x: 200,
-            y: 200,
-          },
-          start: {
-            name: 'Const_0',
-            idx: 0,
-            x: 10,
-            y: 10,
-          },
-        },
-      },
+      flows: {},
       list: [
         {
           name: 'Basic Op',
@@ -154,17 +139,36 @@ export default {
     },
 
     drawPath(pos) {
-      // return
       const flowName = this.$data.createFlow === '' ? 'flow_' + (++this.$data.count.flow) : this.$data.createFlow
       this.$data.createFlow = this.$data.createFlow === '' ? flowName : ''
-      let flowConfig = {
-        start: this.$data.createFlow === '' ? this.$data.flows[flowName].start : { x: pos.x, y: pos.y },
-        end: { x: pos.x, y: pos.y },
+
+      const flowConfig = {
+        idx: pos.idx,
+        name: pos.name,
+        offset: pos.offset,
+        x: pos.x,
+        y: pos.y,
       }
-      this.$set(this.$data.flows, flowName, flowConfig)
+
+      this.$set(this.$data.flows, flowName, {
+        start: this.$data.createFlow === '' ? this.$data.flows[flowName].start : flowConfig,
+        end: flowConfig,
+      })
     },
 
     reDrawPath(info) {
+      const { pos } = this.$data.tensors[info.name]
+      for (const f in this.$data.flows) {
+        if (this.$data.flows[f].end.name === info.name) {
+          this.$data.flows[f].end.x += pos.x - this.$data.flows[f].end.offset.x
+          this.$data.flows[f].end.y += pos.y - this.$data.flows[f].end.offset.y
+          this.$data.flows[f].end.offset = pos
+        } else if (this.$data.flows[f].start.name === info.name) {
+          this.$data.flows[f].start.x += pos.x - this.$data.flows[f].start.offset.x
+          this.$data.flows[f].start.y += pos.y - this.$data.flows[f].start.offset.y
+          this.$data.flows[f].start.offset = pos
+        }
+      }
     }
 
 

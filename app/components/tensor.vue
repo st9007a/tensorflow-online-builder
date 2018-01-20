@@ -1,5 +1,5 @@
 <template lang="pug">
-g.v-tensor(:transform='pos')
+g.v-tensor(:transform='position')
   g(@mousedown='startMove', @dblclick='highlight')
     rect.tensor(
       v-bind='strokeStyle',
@@ -48,7 +48,10 @@ export default {
         y: 0,
       },
       moving: false,
-      pos: 'translate(10, 10)',
+      pos: {
+        x: 10,
+        y: 10,
+      },
       props: {
         name: '',
       },
@@ -59,10 +62,21 @@ export default {
     }
   },
 
+  computed: {
+
+    position() {
+      return `translate(${this.$data.pos.x}, ${this.$data.pos.y})`
+    },
+
+  },
+
   created() {
     this.$data.strokeStyle.stroke = this.border
     this.$data.props.name = this.name
-    this.$data.pos = `translate(${this.value.x}, ${this.value.y})`
+    this.$data.pos = {
+      x: this.value.x,
+      y: this.value.y,
+    }
   },
 
   mounted() {
@@ -106,7 +120,10 @@ export default {
         }
 
         const newPt = point.matrixTransform(transform)
-        this.$data.pos = `translate(${newPt.x - this.width / 2}, ${newPt.y - this.height / 2})`
+        this.$data.pos = {
+          x: newPt.x - this.width / 2,
+          y: newPt.y - this.height / 2,
+        }
         this.$emit('move', {
           name: this.$data.props.name,
         })
@@ -153,6 +170,10 @@ export default {
       this.$emit('onClickPoint', {
         idx: idx,
         name: this.$data.props.name,
+        offset: {
+          x: this.$data.pos.x,
+          y: this.$data.pos.y,
+        },
         type: type,
         x: rect.x,
         y: rect.y,
