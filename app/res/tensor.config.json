@@ -12,6 +12,32 @@
     },
     "width": 120
   },
+  "Placeholder": {
+    "border": "#1e8080",
+    "color": "#63b5b5",
+    "height": 60,
+    "inCount": 0,
+    "name": "Holder",
+    "outCount": 1,
+    "pos": {
+      "x": 10,
+      "y": 10
+    },
+    "width": 120
+  },
+  "Variable": {
+    "border": "#1e8080",
+    "color": "#63b5b5",
+    "height": 60,
+    "inCount": 0,
+    "name": "Var",
+    "outCount": 1,
+    "pos": {
+      "x": 10,
+      "y": 10
+    },
+    "width": 80
+  },
   "Matmul": {
     "border": "#d57e32",
     "color": "#ffba7e",
@@ -24,5 +50,31 @@
       "y": 10
     },
     "width": 120
+  },
+  "Add": {
+    "border": "#d57e32",
+    "color": "#ffba7e",
+    "height": 90,
+    "inCount": 2,
+    "name": "Add",
+    "outCount": 1,
+    "pos": {
+      "x": 10,
+      "y": 10
+    },
+    "width": 80
+  },
+  "Log": {
+    "border": "#d57e32",
+    "color": "#ffba7e",
+    "height": 90,
+    "inCount": 2,
+    "name": "Log",
+    "outCount": 1,
+    "pos": {
+      "x": 10,
+      "y": 10
+    },
+    "width": 80
   }
 }
