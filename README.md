@@ -4,7 +4,7 @@ A website to visualize the computational graph of tensorflow. Users can edit the
 
 ## Demo
 
-<a href='https://st9007a.github.io/tensorflow-online-builder' target='_blank'>Demo</a>
+[Demo](https://st9007a.github.io/tensorflow-online-builder target="_blank")
 
 ## Future Work
 
