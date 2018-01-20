@@ -7,6 +7,14 @@
         .menu(v-if='idx == currentListIdx')
           a.item(v-for='item in cls.list', @dblclick='createTensor(item.name)') {{item.name}}
   svg.edit-interface
+    .flow(
+      is='v-flow',
+      v-for='(f, name) in flows',
+      :startX='f.start.x',
+      :startY='f.start.y',
+      :endX='f.end.x',
+      :endY='f.end.y',
+    )
     .tensor(
       is='v-tensor',
       v-for='(t, name) in tensors',
@@ -20,14 +28,6 @@
       :name='name',
       @move='reDrawPath',
       @onClickPoint='drawPath',
-    )
-    .flow(
-      is='v-flow',
-      v-for='(f, name) in flows',
-      :startX='f.start.x',
-      :startY='f.start.y',
-      :endX='f.end.x',
-      :endY='f.end.y',
     )
 </template>
 
@@ -63,53 +63,35 @@ export default {
           type: '',
         },
       },
-      tensors: {
-        Const_0: {
-          color: '#63b5b5',
-          border: '#1e8080',
-          width: 120,
-          height: 60,
-          inCount: 0,
-          outCount: 1,
-          pos: {
-            x: 10,
-            y: 10,
-          },
-        },
-        Matmul_0: {
-          color: '#ffba7e',
-          border: '#d57e32',
-          width: 120,
-          height: 90,
-          inCount: 2,
-          outCount: 1,
-          pos: {
-            x: 250,
-            y: 20,
-          },
-        },
-      },
+      tensors: {},
       flows: {},
       list: [
         {
+          name: 'Auxiliary',
+          list: [
+            { name: 'Output' },
+          ],
+        },
+        {
           name: 'Basic Op',
           list: [
-            { name: 'Placeholder' },
             { name: 'Constant' },
+            { name: 'Placeholder' },
             { name: 'Variable' },
           ],
         },
         {
           name: 'Math Op',
           list: [
+            { name: 'Add' },
             { name: 'Log' },
             { name: 'Matmul' },
-            { name: 'Add' }
           ],
         },
         {
           name: 'NN Op',
           list: [
+            { name: 'Relu' },
             { name: 'Sigmoid' },
             { name: 'Softmax' },
             { name: 'Tanh' },
@@ -147,9 +129,14 @@ export default {
 
     drawPath(pos) {
       if (!this.$data.createFlow.activate) {
-        this.$set(this.$data.createFlow, 'activate', true)
-        this.$set(this.$data.createFlow, 'name', 'flow_' + (++this.$data.count.flow))
-        this.$set(this.$data.createFlow, 'startAt', { type: pos.type, tensor: pos.name })
+        this.$set(this.$data, 'createFlow', {
+          activate: true,
+          name: 'flow_' + (++this.$data.count.flow),
+          startAt: {
+            type: pos.type,
+            tensor: pos.name,
+          },
+        })
       } else if (pos.type === this.$data.createFlow.startAt.type || pos.name === this.$data.createFlow.startAt.tensor) {
         this.$delete(this.$data.flows, this.$data.createFlow.name)
         this.$set(this.$data.createFlow, 'activate', false)

@@ -1,4 +1,17 @@
 {
+  "Output": {
+    "border": "#c7013d",
+    "color": "#ec4376",
+    "height": 60,
+    "inCount": 1,
+    "name": "Output",
+    "outCount": 0,
+    "pos": {
+      "x": 10,
+      "y": 10
+    },
+    "width": 120
+  },
   "Constant": {
     "border": "#1e8080",
     "color": "#63b5b5",
@@ -76,5 +89,57 @@
       "y": 10
     },
     "width": 80
+  },
+  "Sigmoid": {
+    "border": "#2d42b7",
+    "color": "#6b7cd6",
+    "height": 60,
+    "inCount": 1,
+    "name": "Sigmoid",
+    "outCount": 1,
+    "pos": {
+      "x": 10,
+      "y": 10
+    },
+    "width": 120
+  },
+  "Relu": {
+    "border": "#2d42b7",
+    "color": "#6b7cd6",
+    "height": 60,
+    "inCount": 1,
+    "name": "Relu",
+    "outCount": 1,
+    "pos": {
+      "x": 10,
+      "y": 10
+    },
+    "width": 100
+  },
+  "Tanh": {
+    "border": "#2d42b7",
+    "color": "#6b7cd6",
+    "height": 60,
+    "inCount": 1,
+    "name": "Tanh",
+    "outCount": 1,
+    "pos": {
+      "x": 10,
+      "y": 10
+    },
+    "width": 100
+  },
+  "Softmax": {
+    "border": "#2d42b7",
+    "color": "#6b7cd6",
+    "height": 60,
+    "inCount": 1,
+    "name": "Softmax",
+    "outCount": 1,
+    "pos": {
+      "x": 10,
+      "y": 10
+    },
+    "width": 120
   }
 }
