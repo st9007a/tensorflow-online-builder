@@ -9,10 +9,12 @@ export default {
   props: ['startX', 'startY', 'endX', 'endY'],
 
   created() {
-    this.$data.path.startX = this.startX
-    this.$data.path.startY = this.startY
-    this.$data.path.endX = this.endX
-    this.$data.path.endY = this.endY
+    this.$set(this.$data, 'path', {
+      startX: this.startX,
+      startY: this.startY,
+      endX: this.endX,
+      endY: this.endY,
+    })
   },
 
   computed: {

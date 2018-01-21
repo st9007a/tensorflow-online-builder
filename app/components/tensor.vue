@@ -120,17 +120,16 @@ export default {
         }
 
         const newPt = point.matrixTransform(transform)
+        this.$emit('move', {
+          name: this.$data.props.name,
+          deltaX: newPt.x - this.width / 2 - this.$data.pos.x,
+          deltaY: newPt.y - this.height / 2 - this.$data.pos.y,
+        })
         this.$data.pos = {
           x: newPt.x - this.width / 2,
           y: newPt.y - this.height / 2,
         }
-        this.$emit('move', {
-          name: this.$data.props.name,
-        })
-        this.$emit('input', {
-          x: newPt.x - this.width / 2,
-          y: newPt.y - this.height / 2,
-        })
+        this.$emit('input', this.$data.pos)
       }
 
       const moveFn = (evt) => {

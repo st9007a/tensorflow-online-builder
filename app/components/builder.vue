@@ -150,7 +150,6 @@ export default {
       const flowConfig = {
         idx: pos.idx,
         name: pos.name,
-        offset: pos.offset,
         x: pos.x,
         y: pos.y,
       }
@@ -165,13 +164,11 @@ export default {
       const { pos } = this.$data.tensors[info.name]
       for (const f in this.$data.flows) {
         if (this.$data.flows[f].end.name === info.name) {
-          this.$data.flows[f].end.x += pos.x - this.$data.flows[f].end.offset.x
-          this.$data.flows[f].end.y += pos.y - this.$data.flows[f].end.offset.y
-          this.$data.flows[f].end.offset = pos
+          this.$data.flows[f].end.x += info.deltaX
+          this.$data.flows[f].end.y += info.deltaY
         } else if (this.$data.flows[f].start.name === info.name) {
-          this.$data.flows[f].start.x += pos.x - this.$data.flows[f].start.offset.x
-          this.$data.flows[f].start.y += pos.y - this.$data.flows[f].start.offset.y
-          this.$data.flows[f].start.offset = pos
+          this.$data.flows[f].start.x += info.deltaX
+          this.$data.flows[f].start.y += info.deltaY
         }
       }
     }
