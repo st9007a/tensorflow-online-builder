@@ -1,7 +1,6 @@
 import './index.pug'
 
 import 'semantic-ui-offline/semantic.min.css'
-import './app.sass'
 
 import Vue from 'vue'
 
