@@ -1,8 +1,8 @@
 <template lang="pug">
 g.v-tensor(:transform='position')
-  g(@mousedown='startMove')
+  g(@mousedown='startMove', @dblclick='highlight')
     rect.tensor(
-      v-bind='style.stroke',
+      v-bind='stroke',
       :fill='color.fill',
       :width='rect.width',
       :height='rect.height',
@@ -36,10 +36,6 @@ export default {
           x: 0,
           y: 0,
         },
-        stroke: {
-          'stroke-dasharray': '0, 0',
-          stroke: '',
-        },
       },
     }
   },
@@ -50,10 +46,14 @@ export default {
       return `translate(${this.$data.rect.x}, ${this.$data.rect.y})`
     },
 
+    stroke() {
+      return this.$store.state.editTarget == this.$data.props.name && this.$data.focus ?
+        { stroke: 'black', 'stroke-dasharray': '10, 4' } : { stroke: this.color.border, 'stroke-dasharray': '0, 0' }
+    },
+
   },
 
   created() {
-    this.$data.style.stroke.stroke = this.color.border
     this.$set(this.$data, 'rect', { width: this.width, height: this.height, x: 10, y: 10 })
 
     for (const k in this.propstemplate) {
@@ -72,6 +72,16 @@ export default {
   },
 
   methods: {
+
+    highlight() {
+      this.$data.focus = !this.$data.focus
+
+      if (this.$data.focus) {
+        this.$store.commit('focus', this.$data.props.name)
+      } else {
+        this.$store.commit('unfocus')
+      }
+    },
 
     startMove(e) {
       const elem = e.currentTarget.parentElement.closest('svg')

@@ -83,7 +83,7 @@ export default {
     flex: 1 1 auto
 
   .ui.segment
-    flex: 0 0 240px
+    flex: 0 0 300px
     margin: 0 0 0 1.5rem
 
 svg
