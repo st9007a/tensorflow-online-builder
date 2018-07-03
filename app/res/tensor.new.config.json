@@ -1,0 +1,21 @@
+{
+  "Constant": {
+    "props": {
+      "dtype": "float32",
+      "shape": [],
+      "name": "Const"
+    },
+    "rect": {
+      "height": 60,
+      "width": 120,
+      "x": 10,
+      "y": 10
+    },
+    "color": {
+      "border": "#1e8080",
+      "fill": "#63b5b5"
+    },
+    "inCount": 0,
+    "outCount": 1
+  }
+}
