@@ -1,7 +1,6 @@
 import './index.pug'
 import 'semantic-ui-offline/semantic.min.css'
 
-import { cloneDeep } from 'lodash'
 import Vue from 'vue'
 import Vuex from 'vuex'
 
@@ -18,17 +17,25 @@ const store = new Vuex.Store({
 
   mutations: {
 
-    focus(state, name) {
-      state.editTarget = name
+    focus(state, payload) {
+      state.editTarget = payload.hash
+      state.editTargetProps = payload.props
     },
 
     unfocus(state) {
       state.editTarget = ''
+      state.editTargetProps = {}
     },
 
-    editProps(state, props) {
-      state.props = cloneDeep(props)
+    editProps(state, payload) {
+      state.editTargetProps[payload.key] = payload.value
     },
+
+  },
+
+  getters: {
+
+    isFocus: state => (name, focus) => name == state.editTarget && focus,
 
   },
 

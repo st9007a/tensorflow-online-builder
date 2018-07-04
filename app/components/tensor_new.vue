@@ -2,7 +2,7 @@
 g.v-tensor(:transform='position')
   g(@mousedown='startMove', @dblclick='highlight')
     rect.tensor(
-      v-bind='stroke',
+      v-bind='isFocus(hash, focus) ? style.stroke.focus : style.stroke.default',
       :fill='color.fill',
       :width='rect.width',
       :height='rect.height',
@@ -11,13 +11,32 @@ g.v-tensor(:transform='position')
       ry='10',
     )
     text(ref='text', v-bind='style.font', font-weight='bold') {{props.name}}
+  circle.in(
+    v-for='(n, idx) in inCount',
+    :cy='posY(inCount, idx)',
+    cx='0',
+    r='5',
+    fill='white',
+    stroke='black',
+    stroke-width='4'
+  )
+  circle.out(
+    v-for='(n, idx) in outCount',
+    :cx='width',
+    :cy='posY(outCount, idx)',
+    r='5',
+    fill='white',
+    stroke='black',
+    stroke-width='4'
+  )
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'Tensor',
 
-  props: ['color', 'propstemplate', 'height', 'width', 'value'],
+  props: ['color', 'propstemplate', 'height', 'width', 'value', 'hash', 'inCount', 'outCount'],
 
   data() {
     return {
@@ -36,6 +55,16 @@ export default {
           x: 0,
           y: 0,
         },
+        stroke: {
+          default: {
+            stroke: 'black',
+            'stroke-dasharray': '0, 0',
+          },
+          focus: {
+            stroke: 'black',
+            'stroke-dasharray': '10, 4',
+          },
+        },
       },
     }
   },
@@ -46,14 +75,12 @@ export default {
       return `translate(${this.$data.rect.x}, ${this.$data.rect.y})`
     },
 
-    stroke() {
-      return this.$store.state.editTarget == this.$data.props.name && this.$data.focus ?
-        { stroke: 'black', 'stroke-dasharray': '10, 4' } : { stroke: this.color.border, 'stroke-dasharray': '0, 0' }
-    },
+    ...mapGetters(['isFocus']),
 
   },
 
   created() {
+    this.$data.style.stroke.default.stroke = this.color.border
     this.$set(this.$data, 'rect', { width: this.width, height: this.height, x: 10, y: 10 })
 
     for (const k in this.propstemplate) {
@@ -77,7 +104,7 @@ export default {
       this.$data.focus = !this.$data.focus
 
       if (this.$data.focus) {
-        this.$store.commit('focus', this.$data.props.name)
+        this.$store.commit('focus', {hash: this.hash, props: this.$data.props})
       } else {
         this.$store.commit('unfocus')
       }
@@ -121,6 +148,10 @@ export default {
       elem.addEventListener('mousemove', moveFn)
       elem.addEventListener('mouseup', stopFn)
       elem.addEventListener('mouseleave', stopFn)
+    },
+
+    posY(total, idx) {
+      return this.height / (total + 1) * (idx + 1)
     },
 
   },

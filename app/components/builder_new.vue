@@ -11,15 +11,22 @@
       v-for='(t, id) in tensors'
       v-model='t.rect'
       :key='id'
+      :hash='id'
       :color='t.color'
       :propstemplate='t.props'
       :height='t.rect.height'
       :width='t.rect.width'
+      :inCount='t.inCount'
+      :outCount='t.outCount'
     )
-  .ui.segment
+  .ui.segment: .ui.form
+    .field(v-for='(p, k) in editTargetProps')
+      label {{k}}
+      input(type='text', :value='p', @input='propChange(k, $event)')
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import { cloneDeep } from 'lodash'
 import SHA256 from 'crypto-js/sha256'
 import tensorConfig from '../res/tensor.new.config.json'
@@ -40,10 +47,17 @@ export default {
           name: 'Basic Op',
           list: [
             { name: 'Constant' },
+            { name: 'Placeholder' },
           ],
         },
       ]
     }
+  },
+
+  computed: {
+
+    ...mapState(['editTargetProps'])
+
   },
 
   methods: {
@@ -54,6 +68,10 @@ export default {
       template.props.name += '_' + id.substring(0, 4)
 
       this.$set(this.$data.tensors, id, template)
+    },
+
+    propChange(key, e) {
+      this.$store.commit('editProps', { key: key, value: e.target.value })
     },
 
     toggle(idx) {
