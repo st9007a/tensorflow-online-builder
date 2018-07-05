@@ -3,10 +3,12 @@ import 'semantic-ui-offline/semantic.min.css'
 
 import Vue from 'vue'
 import Vuex from 'vuex'
+import SuiVue from 'semantic-ui-vue'
 
 import App from './app.vue'
 
 Vue.use(Vuex)
+Vue.use(SuiVue)
 
 const store = new Vuex.Store({
 
@@ -28,7 +30,7 @@ const store = new Vuex.Store({
     },
 
     editProps(state, payload) {
-      state.editTargetProps[payload.key] = payload.value
+      state.editTargetProps[payload.key].value = payload.value
     },
 
   },

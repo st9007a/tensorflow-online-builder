@@ -21,8 +21,13 @@
     )
   .ui.segment: .ui.form
     .field(v-for='(p, k) in editTargetProps')
-      label {{k}}
-      input(type='text', :value='p', @input='propChange(k, $event)')
+      template(v-if='p.type == "dtype"')
+        label {{k}}
+        select.ui.fluid.dropdown
+          option(v-for='type in dtype', :value='type') {{type}}
+      template(v-else)
+        label {{k}}
+        input(type='text', :value='p.value', @input='propChange(k, $event)')
 </template>
 
 <script>
@@ -30,6 +35,7 @@ import { mapState } from 'vuex'
 import { cloneDeep } from 'lodash'
 import SHA256 from 'crypto-js/sha256'
 import tensorConfig from '../res/tensor.new.config.json'
+import dtype from '../res/dtype.json'
 import Tensor from './tensor_new.vue'
 export default {
   name: 'Builder',
@@ -40,7 +46,7 @@ export default {
 
   data() {
     return {
-      tensors: {},
+      dtype: [],
       currentListIdx: -1,
       list: [
         {
@@ -50,7 +56,14 @@ export default {
             { name: 'Placeholder' },
           ],
         },
-      ]
+        {
+          name: 'Math Op',
+          list: [
+            { name: 'Matmul' },
+          ],
+        },
+      ],
+      tensors: {},
     }
   },
 
@@ -60,12 +73,16 @@ export default {
 
   },
 
+  created() {
+    this.$data.dtype = dtype
+  },
+
   methods: {
 
     createTensor(name) {
       const template = cloneDeep(tensorConfig[name])
-      let id = SHA256(template.props.name + (new Date()).toJSON()).toString()
-      template.props.name += '_' + id.substring(0, 4)
+      let id = SHA256(template.props.name.value + (new Date()).toJSON()).toString()
+      template.props.name.value += '_' + id.substring(0, 4)
 
       this.$set(this.$data.tensors, id, template)
     },
@@ -116,5 +133,9 @@ svg
 
 .fade-enter, .fade-leave-to
   opacity: 0
+
+select > option
+  border-radius: 5px
+  outline: none
 
 </style>

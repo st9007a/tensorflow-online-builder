@@ -10,7 +10,7 @@ g.v-tensor(:transform='position')
       rx='10',
       ry='10',
     )
-    text(ref='text', v-bind='style.font', font-weight='bold') {{props.name}}
+    text(ref='text', v-bind='style.font', font-weight='bold') {{props.name.value}}
   circle.in(
     v-for='(n, idx) in inCount',
     :cy='posY(inCount, idx)',

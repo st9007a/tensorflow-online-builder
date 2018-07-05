@@ -1,11 +1,10 @@
 <template lang="pug">
 .v-app
-  .ui.secondary.menu
-    .ui.header.item
-      i.configure.icon
-      .content
-        | Tensorflow Builder
-        .sub.header A Online Tensorflow Graph Editor
+  .ui.header.item
+    i.configure.icon
+    .content
+      | Tensorflow Builder
+      .sub.header A Online Tensorflow Graph Editor
   v-builder
 </template>
 
@@ -31,9 +30,9 @@ export default {
   flex-direction: column
   height: 100%
 
-  .ui.secondary.menu:first-child
+  .ui.header
     flex: 0 0 65px
-    margin: -2em 1em 1em 1em
+    margin: 0em 1em 1em 1em
 
     *
       user-select: none
