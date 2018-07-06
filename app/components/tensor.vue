@@ -1,6 +1,6 @@
 <template lang="pug">
 g.v-tensor(:transform='position')
-  g(@mousedown='startMove', @dblclick='highlight')
+  g(@mousedown='startMove', @click='highlight')
     rect.tensor(
       v-bind='isFocus(hash, focus) ? style.stroke.focus : style.stroke.default',
       :fill='color.fill',
