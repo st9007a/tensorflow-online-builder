@@ -20,13 +20,9 @@
     )
   sui-segment: sui-form
     sui-header(v-if='tensors[editTarget]') {{tensors[editTarget].function}}
-    sui-form-field(v-for='(p, k) in editTargetProps', :key='k')
-      template(v-if='p.type == "dtype"')
-        label {{k}}
-        sui-dropdown(selection, placeholder='Data Type', :options='dtype')
-      template(v-else)
-        label {{k}}
-        input(type='text', :value='p.value', @input='propChange(k, $event)')
+    template(v-for='(p, k) in editTargetProps')
+      v-dropdown(v-if='p.type == "dtype"', placeholder='Data Type', :options='dtype', :propName='k')
+      v-input(v-else, :propName='k')
 </template>
 
 <script>
@@ -34,7 +30,9 @@ import { mapState }  from 'vuex'
 import { cloneDeep } from 'lodash'
 import SHA256 from 'crypto-js/sha256'
 
-import Tensor from './tensor.vue'
+import Tensor   from './tensor.vue'
+import Input    from './form/input.vue'
+import Dropdown from './form/dropdown.vue'
 
 import dtype        from '../res/dtype.json'
 import tensorConfig from '../res/tensor.config.json'
@@ -44,7 +42,9 @@ export default {
   name: 'Builder',
 
   components: {
+    'v-input': Input,
     'v-tensor': Tensor,
+    'v-dropdown': Dropdown,
   },
 
   data() {
@@ -75,10 +75,6 @@ export default {
       template.props.name.value += '_' + id.substring(0, 4)
 
       this.$set(this.$data.tensors, id, template)
-    },
-
-    propChange(key, e) {
-      this.$store.commit('editProps', { key: key, value: e.target.value })
     },
 
     toggle(idx) {
