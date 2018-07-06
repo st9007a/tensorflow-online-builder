@@ -2,19 +2,18 @@
 g.v-tensor(:transform='position')
   g(@mousedown='startMove', @dblclick='highlight')
     rect.tensor(
-      v-bind='strokeStyle',
-      :fill='color',
-      :width='width',
-      :height='height',
+      v-bind='isFocus(hash, focus) ? style.stroke.focus : style.stroke.default',
+      :fill='color.fill',
+      :width='rect.width',
+      :height='rect.height',
       stroke-width='5',
       rx='10',
       ry='10',
     )
-    text(ref='text', v-bind='fontStyle', font-weight='bold') {{props.name}}
+    text(ref='text', v-bind='style.font', font-weight='bold') {{props.name.value}}
   circle.in(
     v-for='(n, idx) in inCount',
     :cy='posY(inCount, idx)',
-    @click='clickPoint($event, idx, "in")',
     cx='0',
     r='5',
     fill='white',
@@ -25,7 +24,6 @@ g.v-tensor(:transform='position')
     v-for='(n, idx) in outCount',
     :cx='width',
     :cy='posY(outCount, idx)',
-    @click='clickPoint($event, idx, "out")',
     r='5',
     fill='white',
     stroke='black',
@@ -34,30 +32,39 @@ g.v-tensor(:transform='position')
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'Tensor',
 
-  props: ['name', 'color', 'border', 'width', 'height', 'inCount', 'outCount', 'value'],
+  props: ['color', 'propstemplate', 'height', 'width', 'value', 'hash', 'inCount', 'outCount'],
 
   data() {
     return {
       focus: false,
-      fontStyle: {
-        'font-size': 20,
-        x: 0,
-        y: 0,
-      },
       moving: false,
-      pos: {
+      props: {},
+      rect: {
+        width: 0,
+        height: 0,
         x: 10,
         y: 10,
       },
-      props: {
-        name: '',
-      },
-      strokeStyle: {
-        'stroke-dasharray': '0, 0',
-        stroke: '',
+      style: {
+        font: {
+          'font-size': 20,
+          x: 0,
+          y: 0,
+        },
+        stroke: {
+          default: {
+            stroke: 'black',
+            'stroke-dasharray': '0, 0',
+          },
+          focus: {
+            stroke: 'black',
+            'stroke-dasharray': '10, 4',
+          },
+        },
       },
     }
   },
@@ -65,46 +72,42 @@ export default {
   computed: {
 
     position() {
-      return `translate(${this.$data.pos.x}, ${this.$data.pos.y})`
+      return `translate(${this.$data.rect.x}, ${this.$data.rect.y})`
     },
+
+    ...mapGetters(['isFocus']),
 
   },
 
   created() {
-    this.$data.strokeStyle.stroke = this.border
-    this.$data.props.name = this.name
-    this.$data.pos = {
-      x: this.value.x,
-      y: this.value.y,
+    this.$data.style.stroke.default.stroke = this.color.border
+    this.$set(this.$data, 'rect', { width: this.width, height: this.height, x: 10, y: 10 })
+
+    for (const k in this.propstemplate) {
+      this.$set(this.$data.props, k, this.propstemplate[k])
     }
   },
 
   mounted() {
     let { width, height } = this.$refs.text.getBBox()
-    if (width > this.width * 5 / 6) {
-      this.$set(this.$data.fontStyle, 'font-size', 20 * this.width * 5 / 6 / width)
-      width = this.width * 5 / 6
+    if (width > this.$data.rect.width * 5 / 6) {
+      this.$set(this.$data.style.font, 'font-size', 20 * this.$data.rect.width * 5 / 6 / width)
+      width = this.$data.rect.width * 5 / 6
     }
-    this.$data.fontStyle.x = (this.width - width) / 2 + 5
-    this.$data.fontStyle.y = (this.height - 5) / 2 + height / 2
+    this.$data.style.font.x = (this.$data.rect.width - width) / 2 + 5
+    this.$data.style.font.y = (this.$data.rect.height - 5) / 2 + height / 2
   },
 
   methods: {
 
     highlight() {
-      if (!this.$data.focus) {
-        this.$data.strokeStyle = {
-          stroke: 'black',
-          'stroke-dasharray': '10, 4',
-        }
-      } else {
-        this.$data.strokeStyle = {
-          stroke: this.border,
-          'stroke-dasharray': '0, 0',
-        }
-      }
-
       this.$data.focus = !this.$data.focus
+
+      if (this.$data.focus) {
+        this.$store.commit('focus', {hash: this.hash, props: this.$data.props})
+      } else {
+        this.$store.commit('unfocus')
+      }
     },
 
     startMove(e) {
@@ -120,16 +123,11 @@ export default {
         }
 
         const newPt = point.matrixTransform(transform)
-        this.$emit('move', {
-          name: this.$data.props.name,
-          deltaX: newPt.x - this.width / 2 - this.$data.pos.x,
-          deltaY: newPt.y - this.height / 2 - this.$data.pos.y,
-        })
-        this.$data.pos = {
-          x: newPt.x - this.width / 2,
-          y: newPt.y - this.height / 2,
-        }
-        this.$emit('input', this.$data.pos)
+
+        this.$data.rect.x = newPt.x - this.width / 2
+        this.$data.rect.y = newPt.y - this.height / 2
+
+        this.$emit('input', this.$data.rect)
       }
 
       const moveFn = (evt) => {
@@ -154,29 +152,6 @@ export default {
 
     posY(total, idx) {
       return this.height / (total + 1) * (idx + 1)
-    },
-
-    clickPoint(e, idx, type) {
-      const svgRoot = e.currentTarget.closest('svg')
-      const point = svgRoot.createSVGPoint()
-      const ctm = svgRoot.getScreenCTM()
-
-      point.x = e.clientX
-      point.y = e.clientY
-
-      const rect = point.matrixTransform(ctm.inverse())
-
-      this.$emit('onClickPoint', {
-        idx: idx,
-        name: this.$data.props.name,
-        offset: {
-          x: this.$data.pos.x,
-          y: this.$data.pos.y,
-        },
-        type: type,
-        x: rect.x,
-        y: rect.y,
-      })
     },
 
   },

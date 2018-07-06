@@ -1,107 +1,93 @@
 <template lang="pug">
 .v-builder
-  .ui.left.secondary.vertical.menu
-    .item(v-for='(cls, idx) in list', @click='toggle(idx)')
-      .header {{cls.name}}
-      transition(name='fade')
-        .menu(v-if='idx == currentListIdx')
-          a.item(v-for='item in cls.list', @dblclick='createTensor(item.name)') {{item.name}}
+  sui-menu.menu(vertical, secondary)
+    sui-menu-item(v-for='(cls, idx) in list', :key='cls.name')
+      sui-menu-header(@click='toggle(idx)') {{cls.name}}
+      sui-menu-menu(v-if='idx == currentListIdx')
+        a(is='sui-menu-item', v-for='item in cls.list', :key='item.name', @click='createTensor(item.name)') {{item.name}}
   svg.edit-interface
-    .flow(
-      is='v-flow',
-      v-for='(f, name) in flows',
-      :startX='f.start.x',
-      :startY='f.start.y',
-      :endX='f.end.x',
-      :endY='f.end.y',
+    v-tensor(
+      v-for='(t, id) in tensors'
+      v-model='t.rect'
+      :key='id'
+      :hash='id'
+      :color='t.color'
+      :propstemplate='t.props'
+      :height='t.rect.height'
+      :width='t.rect.width'
+      :inCount='t.inCount'
+      :outCount='t.outCount'
     )
-    .tensor(
-      is='v-tensor',
-      v-for='(t, name) in tensors',
-      v-model='t.pos',
-      :color='t.color',
-      :border='t.border',
-      :width='t.width',
-      :height='t.height',
-      :inCount='t.inCount',
-      :outCount='t.outCount',
-      :name='name',
-      @move='reDrawPath',
-      @onClickPoint='drawPath',
-    )
+  sui-segment: sui-form
+    sui-form-field(v-for='(p, k) in editTargetProps')
+      template(v-if='p.type == "dtype"')
+        label {{k}}
+        sui-dropdown(selection, placeholder='Data Type', :options='dtype')
+      template(v-else)
+        label {{k}}
+        input(type='text', :value='p.value', @input='propChange(k, $event)')
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { cloneDeep } from 'lodash'
+import SHA256 from 'crypto-js/sha256'
 import tensorConfig from '../res/tensor.config.json'
+import dtype from '../res/dtype.json'
 import Tensor from './tensor.vue'
-import Flow from './flow.vue'
 export default {
   name: 'Builder',
 
   components: {
-    'v-flow': Flow,
     'v-tensor': Tensor,
-  },
-
-  created() {
-    for (const name in tensorConfig) {
-      this.$set(this.$data.count, name, 0)
-    }
   },
 
   data() {
     return {
+      dtype: [],
       currentListIdx: -1,
-      count: {
-        flow: 0,
-      },
-      createFlow: {
-        activate: false,
-        name: '',
-        startAt: {
-          tensor: '',
-          type: '',
-        },
-      },
-      tensors: {},
-      flows: {},
       list: [
-        {
-          name: 'Auxiliary',
-          list: [
-            { name: 'Output' },
-          ],
-        },
         {
           name: 'Basic Op',
           list: [
             { name: 'Constant' },
             { name: 'Placeholder' },
-            { name: 'Variable' },
           ],
         },
         {
           name: 'Math Op',
           list: [
-            { name: 'Add' },
-            { name: 'Log' },
             { name: 'Matmul' },
           ],
         },
-        {
-          name: 'NN Op',
-          list: [
-            { name: 'Relu' },
-            { name: 'Sigmoid' },
-            { name: 'Softmax' },
-            { name: 'Tanh' },
-          ],
-        },
-      ]
+      ],
+      tensors: {},
     }
   },
 
+  computed: {
+
+    ...mapState(['editTargetProps'])
+
+  },
+
+  created() {
+    this.$data.dtype = dtype
+  },
+
   methods: {
+
+    createTensor(name) {
+      const template = cloneDeep(tensorConfig[name])
+      let id = SHA256(template.props.name.value + (new Date()).toJSON()).toString()
+      template.props.name.value += '_' + id.substring(0, 4)
+
+      this.$set(this.$data.tensors, id, template)
+    },
+
+    propChange(key, e) {
+      this.$store.commit('editProps', { key: key, value: e.target.value })
+    },
 
     toggle(idx) {
       if (idx == this.$data.currentListIdx) {
@@ -110,69 +96,6 @@ export default {
         this.$data.currentListIdx = idx
       }
     },
-
-    createTensor(name) {
-      const config = tensorConfig[name]
-      this.$set(this.$data.tensors, config.name + '_' + (++this.$data.count[name]), {
-        border: config.border,
-        color: config.color,
-        height: config.height,
-        inCount: config.inCount,
-        outCount: config.outCount,
-        pos: {
-          x: config.pos.x,
-          y: config.pos.y,
-        },
-        width: config.width,
-      })
-    },
-
-    drawPath(pos) {
-      if (!this.$data.createFlow.activate) {
-        this.$set(this.$data, 'createFlow', {
-          activate: true,
-          name: 'flow_' + (++this.$data.count.flow),
-          startAt: {
-            type: pos.type,
-            tensor: pos.name,
-          },
-        })
-      } else if (pos.type === this.$data.createFlow.startAt.type || pos.name === this.$data.createFlow.startAt.tensor) {
-        this.$delete(this.$data.flows, this.$data.createFlow.name)
-        this.$set(this.$data.createFlow, 'activate', false)
-        return
-      } else {
-        this.$set(this.$data.createFlow, 'activate', false)
-      }
-
-      const { name: flowName } = this.$data.createFlow
-
-      const flowConfig = {
-        idx: pos.idx,
-        name: pos.name,
-        x: pos.x,
-        y: pos.y,
-      }
-
-      this.$set(this.$data.flows, flowName, {
-        start: !this.$data.createFlow.activate ? this.$data.flows[flowName].start : flowConfig,
-        end: flowConfig,
-      })
-    },
-
-    reDrawPath(info) {
-      const { pos } = this.$data.tensors[info.name]
-      for (const f in this.$data.flows) {
-        if (this.$data.flows[f].end.name === info.name) {
-          this.$data.flows[f].end.x += info.deltaX
-          this.$data.flows[f].end.y += info.deltaY
-        } else if (this.$data.flows[f].start.name === info.name) {
-          this.$data.flows[f].start.x += info.deltaX
-          this.$data.flows[f].start.y += info.deltaY
-        }
-      }
-    }
-
 
   },
 }
@@ -187,10 +110,14 @@ export default {
     user-select: none
 
   .ui.menu
-    flex: 0 0 210px
+    flex: 0 0 150px
 
   .edit-interface
     flex: 1 1 auto
+
+  .ui.segment
+    flex: 0 0 300px
+    margin: 0 0 0 1.5rem
 
 svg
   border: 4px solid rgba(0, 0, 0, .8)

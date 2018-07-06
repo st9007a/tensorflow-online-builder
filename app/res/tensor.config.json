@@ -1,145 +1,63 @@
 {
-  "Output": {
-    "border": "#c7013d",
-    "color": "#ec4376",
-    "height": 60,
-    "inCount": 1,
-    "name": "Output",
-    "outCount": 0,
-    "pos": {
-      "x": 10,
-      "y": 10
-    },
-    "width": 120
-  },
   "Constant": {
-    "border": "#1e8080",
-    "color": "#63b5b5",
-    "height": 60,
-    "inCount": 0,
-    "name": "Const",
-    "outCount": 1,
-    "pos": {
+    "props": {
+      "dtype": { "value": "float32", "type": "dtype" },
+      "shape": { "value": [], "type": "tuple" },
+      "name": { "value": "Const", "type": "string" }
+    },
+    "rect": {
+      "height": 60,
+      "width": 120,
       "x": 10,
       "y": 10
     },
-    "width": 120
+    "color": {
+      "border": "#1e8080",
+      "fill": "#63b5b5"
+    },
+    "inCount": 0,
+    "outCount": 1
   },
   "Placeholder": {
-    "border": "#1e8080",
-    "color": "#63b5b5",
-    "height": 60,
-    "inCount": 0,
-    "name": "Holder",
-    "outCount": 1,
-    "pos": {
+    "props": {
+      "dtype": { "value": "float32", "type": "dtype" },
+      "shape": { "value": [], "type": "tuple" },
+      "name": { "value": "Holder", "type": "string" }
+    },
+    "rect": {
+      "height": 60,
+      "width": 120,
       "x": 10,
       "y": 10
     },
-    "width": 120
-  },
-  "Variable": {
-    "border": "#1e8080",
-    "color": "#63b5b5",
-    "height": 60,
-    "inCount": 0,
-    "name": "Var",
-    "outCount": 1,
-    "pos": {
-      "x": 10,
-      "y": 10
+    "color": {
+      "border": "#1e8080",
+      "fill": "#63b5b5"
     },
-    "width": 80
+    "inCount": 0,
+    "outCount": 1
   },
   "Matmul": {
-    "border": "#d57e32",
-    "color": "#ffba7e",
-    "height": 90,
+    "props": {
+      "name": { "value": "Matmul", "type": "string" },
+      "transpose_a": { "value": false, "type": "boolean" },
+      "transpose_b": { "value": false, "type": "boolean" },
+      "adjoint_a": { "value": false, "type": "boolean" },
+      "adjoint_b": { "value": false, "type": "boolean" },
+      "a_is_sparse": { "value": false, "type": "boolean" },
+      "b_is_sparse": { "value": false, "type": "boolean" }
+    },
+    "rect": {
+      "height": 90,
+      "width": 120,
+      "x": 10,
+      "y": 10
+    },
+    "color": {
+      "border": "#d57e32",
+      "fill": "#ffba7e"
+    },
     "inCount": 2,
-    "name": "Matmul",
-    "outCount": 1,
-    "pos": {
-      "x": 10,
-      "y": 10
-    },
-    "width": 120
-  },
-  "Add": {
-    "border": "#d57e32",
-    "color": "#ffba7e",
-    "height": 90,
-    "inCount": 2,
-    "name": "Add",
-    "outCount": 1,
-    "pos": {
-      "x": 10,
-      "y": 10
-    },
-    "width": 80
-  },
-  "Log": {
-    "border": "#d57e32",
-    "color": "#ffba7e",
-    "height": 90,
-    "inCount": 2,
-    "name": "Log",
-    "outCount": 1,
-    "pos": {
-      "x": 10,
-      "y": 10
-    },
-    "width": 80
-  },
-  "Sigmoid": {
-    "border": "#2d42b7",
-    "color": "#6b7cd6",
-    "height": 60,
-    "inCount": 1,
-    "name": "Sigmoid",
-    "outCount": 1,
-    "pos": {
-      "x": 10,
-      "y": 10
-    },
-    "width": 120
-  },
-  "Relu": {
-    "border": "#2d42b7",
-    "color": "#6b7cd6",
-    "height": 60,
-    "inCount": 1,
-    "name": "Relu",
-    "outCount": 1,
-    "pos": {
-      "x": 10,
-      "y": 10
-    },
-    "width": 100
-  },
-  "Tanh": {
-    "border": "#2d42b7",
-    "color": "#6b7cd6",
-    "height": 60,
-    "inCount": 1,
-    "name": "Tanh",
-    "outCount": 1,
-    "pos": {
-      "x": 10,
-      "y": 10
-    },
-    "width": 100
-  },
-  "Softmax": {
-    "border": "#2d42b7",
-    "color": "#6b7cd6",
-    "height": 60,
-    "inCount": 1,
-    "name": "Softmax",
-    "outCount": 1,
-    "pos": {
-      "x": 10,
-      "y": 10
-    },
-    "width": 120
+    "outCount": 1
   }
 }

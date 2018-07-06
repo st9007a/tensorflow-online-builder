@@ -1,15 +1,13 @@
 <template lang="pug">
 .v-app
-  .ui.header.item
-    i.configure.icon
-    .content
-      | Tensorflow Builder
-      .sub.header A Online Tensorflow Graph Editor
+  sui-header.title(size='large')
+    | Tensorflow Builder
+    sui-header-subheader A Online Tensorflow Graph Editor
   v-builder
 </template>
 
 <script>
-import Builder from './components/builder_new.vue'
+import Builder from './components/builder.vue'
 export default {
   name: 'App',
 
@@ -30,7 +28,7 @@ export default {
   flex-direction: column
   height: 100%
 
-  .ui.header
+  .title
     flex: 0 0 65px
     margin: 0em 1em 1em 1em
 
