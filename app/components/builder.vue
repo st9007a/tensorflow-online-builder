@@ -22,6 +22,7 @@
     sui-header(v-if='tensors[editTarget]') {{tensors[editTarget].function}}
     template(v-for='(p, k) in editTargetProps')
       v-dropdown(v-if='p.type == "dtype"', placeholder='Data Type', :options='dtype', :propName='k')
+      v-checkbox(v-else-if='p.type=="boolean"', :propName='k')
       v-input(v-else, :propName='k')
 </template>
 
@@ -33,6 +34,7 @@ import SHA256 from 'crypto-js/sha256'
 import Tensor   from './tensor.vue'
 import Input    from './form/input.vue'
 import Dropdown from './form/dropdown.vue'
+import CheckBox from './form/checkbox.vue'
 
 import dtype        from '../res/dtype.json'
 import tensorConfig from '../res/tensor.config.json'
@@ -45,6 +47,7 @@ export default {
     'v-input': Input,
     'v-tensor': Tensor,
     'v-dropdown': Dropdown,
+    'v-checkbox': CheckBox,
   },
 
   data() {
