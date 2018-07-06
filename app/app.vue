@@ -30,7 +30,7 @@ export default {
 
   .title
     flex: 0 0 65px
-    margin: 0em 1em 1em 1em
+    margin: 0em 0.5em 1em 0.5em
 
     *
       user-select: none

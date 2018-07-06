@@ -1,0 +1,15 @@
+[
+  {
+    "name": "Basic Op",
+    "list": [
+      "Constant",
+      "Placeholder"
+    ]
+  },
+  {
+    "name": "Math Op",
+    "list": [
+      "Matmul"
+    ]
+  }
+]

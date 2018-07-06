@@ -4,7 +4,7 @@
     sui-menu-item(v-for='(cls, idx) in list', :key='cls.name')
       sui-menu-header(@click='toggle(idx)') {{cls.name}}
       sui-menu-menu(v-if='idx == currentListIdx')
-        a(is='sui-menu-item', v-for='item in cls.list', :key='item.name', @click='createTensor(item.name)') {{item.name}}
+        a(is='sui-menu-item', v-for='item in cls.list', :key='item', @click='createTensor(item)') {{item}}
   svg.edit-interface
     v-tensor(
       v-for='(t, id) in tensors'
@@ -19,7 +19,8 @@
       :outCount='t.outCount'
     )
   sui-segment: sui-form
-    sui-form-field(v-for='(p, k) in editTargetProps')
+    sui-header(v-if='tensors[editTarget]') {{tensors[editTarget].function}}
+    sui-form-field(v-for='(p, k) in editTargetProps', :key='k')
       template(v-if='p.type == "dtype"')
         label {{k}}
         sui-dropdown(selection, placeholder='Data Type', :options='dtype')
@@ -29,12 +30,16 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState }  from 'vuex'
 import { cloneDeep } from 'lodash'
 import SHA256 from 'crypto-js/sha256'
-import tensorConfig from '../res/tensor.config.json'
-import dtype from '../res/dtype.json'
+
 import Tensor from './tensor.vue'
+
+import dtype        from '../res/dtype.json'
+import tensorConfig from '../res/tensor.config.json'
+import tensorList   from '../res/tensor.list.json'
+
 export default {
   name: 'Builder',
 
@@ -46,33 +51,20 @@ export default {
     return {
       dtype: [],
       currentListIdx: -1,
-      list: [
-        {
-          name: 'Basic Op',
-          list: [
-            { name: 'Constant' },
-            { name: 'Placeholder' },
-          ],
-        },
-        {
-          name: 'Math Op',
-          list: [
-            { name: 'Matmul' },
-          ],
-        },
-      ],
+      list: [],
       tensors: {},
     }
   },
 
   computed: {
 
-    ...mapState(['editTargetProps'])
+    ...mapState(['editTarget', 'editTargetProps'])
 
   },
 
   created() {
     this.$data.dtype = dtype
+    this.$data.list = tensorList
   },
 
   methods: {
