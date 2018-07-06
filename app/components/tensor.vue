@@ -1,6 +1,6 @@
 <template lang="pug">
 g.v-tensor(:transform='position')
-  g(@mousedown='startMove', @click='highlight')
+  g(@mousedown='moveStart($event); clickStart();', @mouseup='clickEnd($event)')
     rect.tensor(
       v-bind='isFocus(hash, focus) ? style.stroke.focus : style.stroke.default',
       :fill='color.fill',
@@ -40,6 +40,7 @@ export default {
 
   data() {
     return {
+      clickStartTimestamp: null,
       focus: false,
       moving: false,
       props: {},
@@ -110,7 +111,17 @@ export default {
       }
     },
 
-    startMove(e) {
+    clickStart() {
+      this.$data.clickStartTimestamp = new Date()
+    },
+
+    clickEnd(e) {
+      if ((new Date()) - this.$data.clickStartTimestamp <= 100 && e.button == 0) {
+        this.highlight()
+      }
+    },
+
+    moveStart(e) {
       const elem = e.currentTarget.parentElement.closest('svg')
       const point = elem.createSVGPoint()
       const transform = elem.getScreenCTM().inverse()
