@@ -96,8 +96,8 @@ export default {
       this.$set(this.$data.style.font, 'font-size', 20 * this.$data.rect.width * 5 / 6 / width)
       width = this.$data.rect.width * 5 / 6
     }
-    this.$data.style.font.x = (this.$data.rect.width - width) / 2 + 5
-    this.$data.style.font.y = (this.$data.rect.height - 5) / 2 + height / 2
+    this.$data.style.font.x = (this.$data.rect.width - width) / 2 + 2.5
+    this.$data.style.font.y = (this.$data.rect.height - 10) / 2 + height / 2
   },
 
   methods: {
