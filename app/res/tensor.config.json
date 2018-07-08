@@ -1,9 +1,9 @@
 {
   "Constant": {
     "props": {
+      "name": { "value": "Const", "type": "string" },
       "dtype": { "value": "float32", "type": "dtype" },
-      "shape": { "value": [], "type": "tuple" },
-      "name": { "value": "Const", "type": "string" }
+      "shape": { "value": [], "type": "tuple" }
     },
     "rect": {
       "height": 60,
@@ -21,9 +21,9 @@
   },
   "Placeholder": {
     "props": {
+      "name": { "value": "Holder", "type": "string" },
       "dtype": { "value": "float32", "type": "dtype" },
-      "shape": { "value": [], "type": "tuple" },
-      "name": { "value": "Holder", "type": "string" }
+      "shape": { "value": [], "type": "tuple" }
     },
     "rect": {
       "height": 60,
