@@ -10,12 +10,12 @@ g.v-tensor(:transform='position')
       rx='10',
       ry='10',
     )
-    text(ref='text', v-bind='style.font', font-weight='bold') {{props.name.value}}
+    text(ref='text', v-bind='style.font', font-weight='bold') {{displayName}}
   text(x = -5, y = -5, font-weight='bold', font-size='18') {{tfFunction}}
   circle.in(
     v-for='(n, idx) in inCount',
-    :cy='posY(inCount, idx)',
     cx='0',
+    :cy='posY(inCount, idx)',
     r='5',
     fill='white',
     stroke='black',
@@ -77,6 +77,11 @@ export default {
       return `translate(${this.$data.rect.x}, ${this.$data.rect.y})`
     },
 
+    displayName() {
+      return this.$data.props.name.value.length > 8 ?
+        `${this.$data.props.name.value.substring(0, 8)}...` : this.$data.props.name.value
+    },
+
     ...mapGetters(['isFocus']),
 
   },
@@ -91,16 +96,20 @@ export default {
   },
 
   mounted() {
-    let { width, height } = this.$refs.text.getBBox()
-    if (width > this.$data.rect.width * 5 / 6) {
-      this.$set(this.$data.style.font, 'font-size', 20 * this.$data.rect.width * 5 / 6 / width)
-      width = this.$data.rect.width * 5 / 6
-    }
-    this.$data.style.font.x = (this.$data.rect.width - width) / 2 + 2.5
-    this.$data.style.font.y = (this.$data.rect.height - 10) / 2 + height / 2
+    this.fixFontPosition()
+  },
+
+  updated() {
+    this.fixFontPosition()
   },
 
   methods: {
+
+    fixFontPosition() {
+      let { width, height } = this.$refs.text.getBBox()
+      this.$data.style.font.x = (this.$data.rect.width - width) / 2 + 2.5
+      this.$data.style.font.y = (this.$data.rect.height - 10) / 2 + height / 2
+    },
 
     highlight() {
       this.$data.focus = !this.$data.focus
@@ -167,6 +176,7 @@ export default {
     },
 
   },
+
 }
 </script>
 
