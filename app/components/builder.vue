@@ -17,6 +17,7 @@
       :width='t.rect.width'
       :inCount='t.inCount'
       :outCount='t.outCount'
+      :tfFunction='t.function'
     )
   sui-segment: sui-form
     sui-header(v-if='tensors[editTarget]') {{tensors[editTarget].function}}
@@ -75,7 +76,7 @@ export default {
     createTensor(name) {
       const template = cloneDeep(tensorConfig[name])
       let id = SHA256(template.props.name.value + (new Date()).toJSON()).toString()
-      template.props.name.value += '_' + id.substring(0, 4)
+      template.props.name.value = id.substring(0, 6)
 
       this.$set(this.$data.tensors, id, template)
     },

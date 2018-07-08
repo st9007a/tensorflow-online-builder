@@ -11,6 +11,7 @@ g.v-tensor(:transform='position')
       ry='10',
     )
     text(ref='text', v-bind='style.font', font-weight='bold') {{props.name.value}}
+  text(x = -5, y = -5, font-weight='bold', font-size='18') {{tfFunction}}
   circle.in(
     v-for='(n, idx) in inCount',
     :cy='posY(inCount, idx)',
@@ -36,7 +37,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'Tensor',
 
-  props: ['color', 'propstemplate', 'height', 'width', 'value', 'hash', 'inCount', 'outCount'],
+  props: ['color', 'propstemplate', 'height', 'width', 'value', 'hash', 'inCount', 'outCount', 'tfFunction'],
 
   data() {
     return {
