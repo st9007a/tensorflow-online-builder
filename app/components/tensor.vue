@@ -48,8 +48,8 @@ export default {
       rect: {
         width: 0,
         height: 0,
-        x: 10,
-        y: 10,
+        x: 20,
+        y: 20,
       },
       style: {
         font: {
@@ -88,7 +88,7 @@ export default {
 
   created() {
     this.$data.style.stroke.default.stroke = this.color.border
-    this.$set(this.$data, 'rect', { width: this.width, height: this.height, x: 10, y: 10 })
+    this.$set(this.$data, 'rect', { width: this.width, height: this.height, x: 30, y: 30 })
 
     for (const k in this.propstemplate) {
       this.$set(this.$data.props, k, this.propstemplate[k])

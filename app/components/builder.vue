@@ -6,12 +6,12 @@
       sui-menu-menu(v-if='idx == currentListIdx')
         a(is='sui-menu-item', v-for='item in cls.list', :key='item', @click='createTensor(item)') {{item}}
   svg.edit-interface(
-    @mousewheel='zoomScale',
-    @mousedown='zoomTranslateStart',
-    @mouseup='zoomTranslateEnd',
-    @mousemove='zoomTranslate',
-    @dblclick='zoomReset',
-  ): g(:transform='getZoom')
+    @mousewheel='scale',
+    @mousedown='translateStart',
+    @mouseup='translateEnd',
+    @mousemove='translate',
+    @dblclick='transformReset',
+  ): g(:transform='getTransform')
     v-tensor(
       v-for='(t, id) in tensors'
       v-model='t.rect'
@@ -63,7 +63,7 @@ export default {
       currentListIdx: -1,
       list: [],
       tensors: {},
-      zoom: {
+      transform: {
         moving: false,
         prevX: null,
         prevY: null,
@@ -76,8 +76,8 @@ export default {
 
   computed: {
 
-    getZoom() {
-      return `translate(${this.$data.zoom.x}, ${this.$data.zoom.y}) scale(${this.$data.zoom.scale})`
+    getTransform() {
+      return `translate(${this.$data.transform.x}, ${this.$data.transform.y}) scale(${this.$data.transform.scale})`
     },
 
     ...mapState(['editTarget', 'editTargetProps'])
@@ -107,34 +107,36 @@ export default {
       }
     },
 
-    zoomReset() {
-      this.$set(this.$data.zoom, 'x', 0)
-      this.$set(this.$data.zoom, 'y', 0)
-      this.$set(this.$data.zoom, 'scale', 1)
+    transformReset() {
+      this.$set(this.$data.transform, 'x', 0)
+      this.$set(this.$data.transform, 'y', 0)
+      this.$set(this.$data.transform, 'scale', 1)
 
-      this.$set(this.$data.zoom, 'prevX', null)
-      this.$set(this.$data.zoom, 'prevY', null)
+      this.$set(this.$data.transform, 'prevX', null)
+      this.$set(this.$data.transform, 'prevY', null)
     },
 
-    zoomScale(e) {
-      if (this.$data.zoom.scale <= 0.25 || this.$data.zoom.scale >= 2.5) {
+    scale(e) {
+      if (this.$data.transform.scale <= 0.25 || this.$data.transform.scale >= 2.5) {
         return
       }
-      this.$data.zoom.scale -= Math.sign(e.deltaY) * 0.25
+      this.$data.transform.scale -= Math.sign(e.deltaY) * 0.25
     },
 
-    zoomTranslateStart(e) {
+    translateStart(e) {
       if (e.target.tagName == 'svg') {
-        this.$data.zoom.moving = true
+        this.$data.transform.moving = true
       }
     },
 
-    zoomTranslateEnd(e) {
-      this.$data.zoom.moving = false
+    translateEnd(e) {
+      this.$data.transform.moving = false
+      this.$set(this.$data.transform, 'prevX', null)
+      this.$set(this.$data.transform, 'prevY', null)
     },
 
-    zoomTranslate(e) {
-      if (!this.$data.zoom.moving) {
+    translate(e) {
+      if (!this.$data.transform.moving) {
         return
       }
 
@@ -147,13 +149,14 @@ export default {
 
       const rect = point.matrixTransform(ctm.inverse())
 
-      if (this.$data.zoom.prevX != null && this.$data.zoom.prevY != null) {
-        this.$data.zoom.x += rect.x - this.$data.zoom.prevX
-        this.$data.zoom.y += rect.y - this.$data.zoom.prevY
+      if (this.$data.transform.prevX != null && this.$data.transform.prevY != null) {
+        this.$data.transform.x += rect.x - this.$data.transform.prevX
+        this.$data.transform.y += rect.y - this.$data.transform.prevY
       }
 
-      this.$data.zoom.prevX = rect.x
-      this.$data.zoom.prevY = rect.y
+      this.$set(this.$data.transform, 'prevX', rect.x)
+      this.$set(this.$data.transform, 'prevY', rect.y)
+
     },
 
   },
