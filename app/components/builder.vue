@@ -24,6 +24,7 @@
       :inCount='t.inCount'
       :outCount='t.outCount'
       :tfFunction='t.function'
+      :transform='transform',
     )
   sui-segment: sui-form
     sui-header(v-if='tensors[editTarget]') {{tensors[editTarget].function}}
@@ -93,7 +94,7 @@ export default {
 
     createTensor(name) {
       const template = cloneDeep(tensorConfig[name])
-      let id = SHA256(template.props.name.value + (new Date()).toJSON()).toString()
+      const id = SHA256(template.props.name.value + (new Date()).toJSON()).toString()
       template.props.name.value = id.substring(0, 6)
 
       this.$set(this.$data.tensors, id, template)
@@ -107,7 +108,11 @@ export default {
       }
     },
 
-    transformReset() {
+    transformReset(e) {
+      if (e.target.tagName != 'svg') {
+        return
+      }
+
       this.$set(this.$data.transform, 'x', 0)
       this.$set(this.$data.transform, 'y', 0)
       this.$set(this.$data.transform, 'scale', 1)
@@ -117,10 +122,13 @@ export default {
     },
 
     scale(e) {
-      if (this.$data.transform.scale <= 0.25 || this.$data.transform.scale >= 2.5) {
-        return
-      }
       this.$data.transform.scale -= Math.sign(e.deltaY) * 0.25
+      if (this.$data.transform.scale < 0.25) {
+        this.$data.transform.scale = 0.25
+      }
+      if (this.$data.transform.scale > 2.5) {
+        this.$data.transform.scale = 2.5
+      }
     },
 
     translateStart(e) {
@@ -150,8 +158,8 @@ export default {
       const rect = point.matrixTransform(ctm.inverse())
 
       if (this.$data.transform.prevX != null && this.$data.transform.prevY != null) {
-        this.$data.transform.x += rect.x - this.$data.transform.prevX
-        this.$data.transform.y += rect.y - this.$data.transform.prevY
+        this.$data.transform.x += (rect.x - this.$data.transform.prevX) * this.$data.transform.scale
+        this.$data.transform.y += (rect.y - this.$data.transform.prevY) * this.$data.transform.scale
       }
 
       this.$set(this.$data.transform, 'prevX', rect.x)
