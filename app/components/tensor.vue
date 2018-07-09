@@ -37,7 +37,18 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'Tensor',
 
-  props: ['color', 'propstemplate', 'height', 'width', 'value', 'hash', 'inCount', 'outCount', 'tfFunction'],
+  props: [
+    'color',
+    'propstemplate',
+    'height',
+    'width',
+    'value',
+    'hash',
+    'inCount',
+    'outCount',
+    'tfFunction',
+    'transform',
+  ],
 
   data() {
     return {
@@ -145,8 +156,8 @@ export default {
 
         const newPt = point.matrixTransform(transform)
 
-        this.$data.rect.x = newPt.x - this.width / 2
-        this.$data.rect.y = newPt.y - this.height / 2
+        this.$data.rect.x = (newPt.x - this.transform.x) / this.transform.scale - this.width / 2
+        this.$data.rect.y = (newPt.y - this.transform.y) / this.transform.scale - this.height / 2
 
         this.$emit('input', this.$data.rect)
       }
