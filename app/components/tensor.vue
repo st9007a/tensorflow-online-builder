@@ -4,8 +4,8 @@ g.v-tensor(:transform='position')
     rect.tensor(
       v-bind='isFocus(hash, focus) ? style.stroke.focus : style.stroke.default',
       :fill='color.fill',
-      :width='rect.width',
-      :height='rect.height',
+      :width='width',
+      :height='height',
       stroke-width='5',
       rx='10',
       ry='10',
@@ -19,7 +19,8 @@ g.v-tensor(:transform='position')
     r='5',
     fill='white',
     stroke='black',
-    stroke-width='4'
+    stroke-width='4',
+    @click='clickPoint($event, "i", idx)',
   )
   circle.out(
     v-for='(n, idx) in outCount',
@@ -28,7 +29,8 @@ g.v-tensor(:transform='position')
     r='5',
     fill='white',
     stroke='black',
-    stroke-width='4'
+    stroke-width='4',
+    @click='clickPoint($event, "o", idx)',
   )
 </template>
 
@@ -56,11 +58,11 @@ export default {
       focus: false,
       moving: false,
       props: {},
-      rect: {
-        width: 0,
-        height: 0,
-        x: 20,
-        y: 20,
+      coord: {
+        x: 30,
+        y: 30,
+        i: [],
+        o: [],
       },
       style: {
         font: {
@@ -85,7 +87,7 @@ export default {
   computed: {
 
     position() {
-      return `translate(${this.$data.rect.x}, ${this.$data.rect.y})`
+      return `translate(${this.$data.coord.x}, ${this.$data.coord.y})`
     },
 
     displayName() {
@@ -99,11 +101,20 @@ export default {
 
   created() {
     this.$data.style.stroke.default.stroke = this.color.border
-    this.$set(this.$data, 'rect', { width: this.width, height: this.height, x: 30, y: 30 })
+
+    for (let i = 0; i < this.inCount; i++) {
+      this.$data.coord.i.push({ deltaX: 0, deltaY: this.posY(this.inCount, i) })
+    }
+
+    for (let i = 0; i < this.outCount; i++) {
+      this.$data.coord.o.push({ deltaX: this.width, deltaY: this.posY(this.outCount, i) })
+    }
 
     for (const k in this.propstemplate) {
       this.$set(this.$data.props, k, this.propstemplate[k])
     }
+
+    this.$emit('input', this.$data.coord)
   },
 
   mounted() {
@@ -118,8 +129,8 @@ export default {
 
     fixFontPosition() {
       let { width, height } = this.$refs.text.getBBox()
-      this.$data.style.font.x = (this.$data.rect.width - width) / 2 + 2.5
-      this.$data.style.font.y = (this.$data.rect.height - 10) / 2 + height / 2
+      this.$data.style.font.x = (this.width - width) / 2 + 2.5
+      this.$data.style.font.y = (this.height - 10) / 2 + height / 2
     },
 
     highlight() {
@@ -130,6 +141,23 @@ export default {
       } else {
         this.$store.commit('unfocus')
       }
+    },
+
+    clickPoint(e, io, idx) {
+      const svgRoot = e.currentTarget.closest('svg')
+      const point = svgRoot.createSVGPoint()
+      const ctm = svgRoot.getScreenCTM()
+
+      point.x = e.clientX
+      point.y = e.clientY
+
+      const rect = point.matrixTransform(ctm.inverse())
+
+      this.$emit('clickPoint', {
+        hash: this.hash,
+        io: io,
+        idx: idx,
+      })
     },
 
     clickStart() {
@@ -156,10 +184,10 @@ export default {
 
         const newPt = point.matrixTransform(transform)
 
-        this.$data.rect.x = (newPt.x - this.transform.x) / this.transform.scale - this.width / 2
-        this.$data.rect.y = (newPt.y - this.transform.y) / this.transform.scale - this.height / 2
+        this.$data.coord.x = (newPt.x - this.transform.x) / this.transform.scale - this.width / 2
+        this.$data.coord.y = (newPt.y - this.transform.y) / this.transform.scale - this.height / 2
 
-        this.$emit('input', this.$data.rect)
+        this.$emit('input', this.$data.coord)
       }
 
       const moveFn = (evt) => {

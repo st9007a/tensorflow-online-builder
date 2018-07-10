@@ -12,9 +12,10 @@
     @mousemove='translate',
     @dblclick='transformReset',
   ): g(:transform='getTransform')
+    path(v-for='conn in connections', :d='getPath(conn)', stroke='black', stroke-width='5')
     v-tensor(
       v-for='(t, id) in tensors'
-      v-model='t.rect'
+      v-model='t.coord'
       :key='id'
       :hash='id'
       :color='t.color'
@@ -25,6 +26,7 @@
       :outCount='t.outCount'
       :tfFunction='t.function'
       :transform='transform',
+      @clickPoint='drawConnection',
     )
   sui-segment: sui-form
     sui-header(v-if='tensors[editTarget]') {{tensors[editTarget].function}}
@@ -60,8 +62,13 @@ export default {
 
   data() {
     return {
-      dtype: [],
+      connections: [],
       currentListIdx: -1,
+      drawConn: {
+        i: null,
+        o: null,
+      },
+      dtype: [],
       list: [],
       tensors: {},
       transform: {
@@ -93,11 +100,48 @@ export default {
   methods: {
 
     createTensor(name) {
-      const template = cloneDeep(tensorConfig[name])
+      let template = cloneDeep(tensorConfig[name])
       const id = SHA256(template.props.name.value + (new Date()).toJSON()).toString()
+
       template.props.name.value = id.substring(0, 6)
+      template.coord = {}
 
       this.$set(this.$data.tensors, id, template)
+    },
+
+    drawConnection(connInfo) {
+      this.$data.drawConn[connInfo.io] = { hash: connInfo.hash, idx: connInfo.idx }
+
+      if (this.$data.drawConn.i != null && this.$data.drawConn.o != null) {
+
+        this.$data.connections.push({
+          i: {
+            hash: this.$data.drawConn.i.hash,
+            idx: this.$data.drawConn.i.idx,
+          },
+          o: {
+            hash: this.$data.drawConn.o.hash,
+            idx: this.$data.drawConn.o.idx,
+          },
+        })
+
+        this.$data.drawConn.i = null
+        this.$data.drawConn.o = null
+      }
+
+    },
+
+    getPath(conn) {
+      const startDeltaX = this.$data.tensors[conn.i.hash].coord.i[conn.i.idx].deltaX,
+            startDeltaY = this.$data.tensors[conn.i.hash].coord.i[conn.i.idx].deltaY,
+            startX = this.$data.tensors[conn.i.hash].coord.x,
+            startY = this.$data.tensors[conn.i.hash].coord.y,
+            endDeltaX = this.$data.tensors[conn.o.hash].coord.o[conn.o.idx].deltaX,
+            endDeltaY = this.$data.tensors[conn.o.hash].coord.o[conn.o.idx].deltaY,
+            endX = this.$data.tensors[conn.o.hash].coord.x,
+            endY = this.$data.tensors[conn.o.hash].coord.y
+
+      return `M${startX + startDeltaX} ${startY + startDeltaY} L${endX + endDeltaX} ${endY + endDeltaY}`
     },
 
     toggle(idx) {
@@ -113,12 +157,12 @@ export default {
         return
       }
 
-      this.$set(this.$data.transform, 'x', 0)
-      this.$set(this.$data.transform, 'y', 0)
-      this.$set(this.$data.transform, 'scale', 1)
+      this.$data.transform.x = 0
+      this.$data.transform.y = 0
+      this.$data.transform.scale = 1
+      this.$data.transform.prevX = null
+      this.$data.transform.prevY = null
 
-      this.$set(this.$data.transform, 'prevX', null)
-      this.$set(this.$data.transform, 'prevY', null)
     },
 
     scale(e) {
@@ -139,8 +183,8 @@ export default {
 
     translateEnd(e) {
       this.$data.transform.moving = false
-      this.$set(this.$data.transform, 'prevX', null)
-      this.$set(this.$data.transform, 'prevY', null)
+      this.$data.transform.prevX = null
+      this.$data.transform.prevY = null
     },
 
     translate(e) {
@@ -162,9 +206,8 @@ export default {
         this.$data.transform.y += (rect.y - this.$data.transform.prevY) * this.$data.transform.scale
       }
 
-      this.$set(this.$data.transform, 'prevX', rect.x)
-      this.$set(this.$data.transform, 'prevY', rect.y)
-
+      this.$data.transform.prevX = rect.x
+      this.$data.transform.prevY = rect.y
     },
 
   },
