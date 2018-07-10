@@ -12,7 +12,13 @@
     @mousemove='translate',
     @dblclick='transformReset',
   ): g(:transform='getTransform')
-    path(v-for='conn in connections', :d='getPath(conn)', stroke='black', stroke-width='5')
+    path(
+      v-for='(conn, id) in connections',
+      :d='getPath(conn)',
+      stroke='black',
+      stroke-width='5',
+      @dblclick='removePath(id)',
+    )
     v-tensor(
       v-for='(t, id) in tensors'
       v-model='t.coord'
@@ -62,7 +68,7 @@ export default {
 
   data() {
     return {
-      connections: [],
+      connections: {},
       currentListIdx: -1,
       drawConn: {
         i: null,
@@ -114,7 +120,9 @@ export default {
 
       if (this.$data.drawConn.i != null && this.$data.drawConn.o != null) {
 
-        this.$data.connections.push({
+        const id = SHA256(`${this.$data.drawConn.i.hash}-${this.$data.drawConn.i.idx}-${this.$data.drawConn.o.hash}-${this.$data.drawConn.o.idx}`).toString()
+
+        this.$set(this.$data.connections, id, {
           i: {
             hash: this.$data.drawConn.i.hash,
             idx: this.$data.drawConn.i.idx,
@@ -125,6 +133,17 @@ export default {
           },
         })
 
+        // this.$data.connections.push({
+        //   i: {
+        //     hash: this.$data.drawConn.i.hash,
+        //     idx: this.$data.drawConn.i.idx,
+        //   },
+        //   o: {
+        //     hash: this.$data.drawConn.o.hash,
+        //     idx: this.$data.drawConn.o.idx,
+        //   },
+        // })
+
         this.$data.drawConn.i = null
         this.$data.drawConn.o = null
       }
@@ -132,16 +151,21 @@ export default {
     },
 
     getPath(conn) {
-      const startDeltaX = this.$data.tensors[conn.i.hash].coord.i[conn.i.idx].deltaX,
-            startDeltaY = this.$data.tensors[conn.i.hash].coord.i[conn.i.idx].deltaY,
-            startX = this.$data.tensors[conn.i.hash].coord.x,
-            startY = this.$data.tensors[conn.i.hash].coord.y,
-            endDeltaX = this.$data.tensors[conn.o.hash].coord.o[conn.o.idx].deltaX,
-            endDeltaY = this.$data.tensors[conn.o.hash].coord.o[conn.o.idx].deltaY,
-            endX = this.$data.tensors[conn.o.hash].coord.x,
-            endY = this.$data.tensors[conn.o.hash].coord.y
+      const startDeltaX = this.$data.tensors[conn.o.hash].coord.o[conn.o.idx].deltaX,
+            startDeltaY = this.$data.tensors[conn.o.hash].coord.o[conn.o.idx].deltaY,
+            startX = this.$data.tensors[conn.o.hash].coord.x,
+            startY = this.$data.tensors[conn.o.hash].coord.y,
+            endDeltaX = this.$data.tensors[conn.i.hash].coord.i[conn.i.idx].deltaX,
+            endDeltaY = this.$data.tensors[conn.i.hash].coord.i[conn.i.idx].deltaY,
+            endX = this.$data.tensors[conn.i.hash].coord.x,
+            endY = this.$data.tensors[conn.i.hash].coord.y
 
       return `M${startX + startDeltaX} ${startY + startDeltaY} L${endX + endDeltaX} ${endY + endDeltaY}`
+    },
+
+    removePath(id) {
+      console.log(id)
+      this.$delete(this.$data.connections, id)
     },
 
     toggle(idx) {
