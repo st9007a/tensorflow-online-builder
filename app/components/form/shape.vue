@@ -59,24 +59,42 @@ export default {
 
   methods: {
 
+    pushValue(val) {
+      this.$store.commit('pushTupleValue', { key: this.propName, value: val })
+      this.$data.dimension = ''
+      this.$data.invalid.error = false
+    },
+
+    showErrorMessage(msg) {
+      this.$data.invalid.error = true
+      this.$data.invalid.message = msg
+    },
+
     addDimension() {
       if (this.$store.state.editTargetProps[this.propName].value.length < 5 && this.$data.dimension != '') {
+
+        if (this.$data.dimension === 'None') {
+          this.pushValue(this.$data.dimension)
+          return
+        }
+
         try {
           const value = mexp.eval(this.$data.dimension)
 
           if (value % 1 !== 0) {
-            this.$data.invalid.error = true
-            this.$data.invalid.message = 'Result should be integer.'
+            this.showErrorMessage('Result should be integer.')
             return
           }
 
-          this.$store.commit('pushTupleValue', { key: this.propName, value: value })
-          this.$data.dimension = ''
-          this.$data.invalid.error = false
+          if (value < -1 || value == 0) {
+            this.showErrorMessage('Result should be -1 or positive number.')
+            return
+          }
+
+          this.pushValue(value)
 
         } catch (e) {
-          this.$data.invalid.error = true
-          this.$data.invalid.message = 'Math expression is invalid.'
+          this.showErrorMessage('Math expression is invalid.')
         }
       }
     },
