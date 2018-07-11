@@ -3,7 +3,7 @@
   sui-menu.menu(vertical, secondary)
     sui-menu-item(v-for='(cls, idx) in list', :key='cls.name')
       sui-menu-header(@click='toggle(idx)') {{cls.name}}
-      sui-menu-menu(v-if='idx == currentListIdx')
+      sui-menu-menu(v-if='idx == activeIdx')
         a(is='sui-menu-item', v-for='item in cls.list', :key='item', @click='createTensor(item)') {{item}}
   svg.edit-interface(
     @mousewheel='scale',
@@ -39,6 +39,7 @@
     template(v-for='(p, k) in editTargetProps')
       v-dropdown(v-if='p.type == "dtype"', placeholder='Data Type', :options='dtype', :propName='k')
       v-checkbox(v-else-if='p.type=="boolean"', :propName='k')
+      v-shape(v-else-if='p.type=="tuple"', :propName='k')
       v-input(v-else, :propName='k')
 </template>
 
@@ -51,6 +52,7 @@ import Tensor   from './tensor.vue'
 import Input    from './form/input.vue'
 import Dropdown from './form/dropdown.vue'
 import CheckBox from './form/checkbox.vue'
+import Shape    from './form/shape.vue'
 
 import dtype        from '../res/dtype.json'
 import tensorConfig from '../res/tensor.config.json'
@@ -64,12 +66,13 @@ export default {
     'v-tensor': Tensor,
     'v-dropdown': Dropdown,
     'v-checkbox': CheckBox,
+    'v-shape': Shape,
   },
 
   data() {
     return {
       connections: {},
-      currentListIdx: -1,
+      activeIdx: -1,
       drawConn: {
         i: null,
         o: null,
@@ -133,17 +136,6 @@ export default {
           },
         })
 
-        // this.$data.connections.push({
-        //   i: {
-        //     hash: this.$data.drawConn.i.hash,
-        //     idx: this.$data.drawConn.i.idx,
-        //   },
-        //   o: {
-        //     hash: this.$data.drawConn.o.hash,
-        //     idx: this.$data.drawConn.o.idx,
-        //   },
-        // })
-
         this.$data.drawConn.i = null
         this.$data.drawConn.o = null
       }
@@ -160,20 +152,15 @@ export default {
             endX = this.$data.tensors[conn.i.hash].coord.x,
             endY = this.$data.tensors[conn.i.hash].coord.y
 
-      return `M${startX + startDeltaX} ${startY + startDeltaY} L${endX + endDeltaX} ${endY + endDeltaY}`
+      return `M${startX + startDeltaX + 2} ${startY + startDeltaY} L${endX + endDeltaX - 2} ${endY + endDeltaY}`
     },
 
     removePath(id) {
-      console.log(id)
       this.$delete(this.$data.connections, id)
     },
 
     toggle(idx) {
-      if (idx == this.$data.currentListIdx) {
-        this.$data.currentListIdx = -1
-      } else {
-        this.$data.currentListIdx = idx
-      }
+      this.$data.activeIdx = this.$data.activeIdx == idx ? -1 : idx
     },
 
     transformReset(e) {
@@ -191,12 +178,7 @@ export default {
 
     scale(e) {
       this.$data.transform.scale -= Math.sign(e.deltaY) * 0.25
-      if (this.$data.transform.scale < 0.25) {
-        this.$data.transform.scale = 0.25
-      }
-      if (this.$data.transform.scale > 2.5) {
-        this.$data.transform.scale = 2.5
-      }
+      this.$data.transform.scale = Math.max(0.25, Math.min(2.5, this.$data.transform.scale))
     },
 
     translateStart(e) {

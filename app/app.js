@@ -33,6 +33,14 @@ const store = new Vuex.Store({
       state.editTargetProps[payload.key].value = payload.value
     },
 
+    pushTupleValue(state, payload) {
+      state.editTargetProps[payload.key].value.push(payload.value)
+    },
+
+    popTupleValue(state, payload) {
+      state.editTargetProps[payload].value.pop()
+    },
+
   },
 
   getters: {
