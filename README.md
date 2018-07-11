@@ -10,4 +10,6 @@ A website to visualize the computational graph of tensorflow. Users can edit the
 
 - Beautify UI
 - Support more tensorflow api
+- Shape validation
+- Export and import
 - Python code generation
