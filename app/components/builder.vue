@@ -251,4 +251,7 @@ svg
 .fade-enter, .fade-leave-to
   opacity: 0
 
+.menu
+  font-size: 1.2rem
+
 </style>
