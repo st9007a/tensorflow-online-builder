@@ -16,13 +16,15 @@
             sui-dropdown(placeholder='Export as', selection, :options='exportPanel.exportTypeList', v-model='exportConfig.as')
         sui-modal-actions
           div(is='sui-button-group')
-            sui-button Cancel
+            sui-button(@click.native='exportPanel.open = false') Cancel
             sui-button-or
-            sui-button(positive) Export
-  v-builder
+            sui-button(positive, @click.native='generateCode') Export
+  v-builder(v-model='graphStruct')
 </template>
 
 <script>
+import { cloneDeep } from 'lodash'
+import { Pool } from './lib/collection'
 import Builder from './components/builder.vue'
 export default {
   name: 'App',
@@ -33,6 +35,7 @@ export default {
 
   data() {
     return {
+      graphStruct: null,
       exportPanel: {
         open: false,
         programList: [
@@ -40,7 +43,6 @@ export default {
         ],
         exportTypeList: [
           { text: 'Function', value: 'Function' },
-          { text: 'Class', value: 'Class' },
         ],
       },
       exportConfig: {
@@ -48,6 +50,52 @@ export default {
         as: null,
       },
     }
+  },
+
+  methods: {
+
+    generateCode() {
+      const { tensors, connections } = cloneDeep(this.$data.graphStruct)
+      const entryNode = new Pool()
+      const stashPool = new Pool()
+      const sortedConnections = []
+
+      const pushConnectionByTensorId = (tensorId) => {
+        for (const k in connections) {
+          if (connections[k].o.hash === tensorId) {
+            sortedConnections.push(k)
+
+            const nextTensorId = connections[k].i.hash
+
+            if (tensors[nextTensorId].connect.parents == 1) {
+              pushConnectionByTensorId(nextTensorId)
+            } else {
+              tensors[nextTensorId].connect.parents--
+            }
+
+            break
+          }
+        }
+      }
+
+      // Find all entry node
+      for (const id in tensors) {
+        if (tensors[id].connect.parents == 0) {
+          entryNode.add(id)
+        }
+      }
+
+      // Sort connections
+      while (!entryNode.isEmpty()) {
+        const tensorId = entryNode.pick()
+        entryNode.remove(tensorId)
+
+        pushConnectionByTensorId(tensorId)
+
+      }
+
+    },
+
   },
 }
 </script>

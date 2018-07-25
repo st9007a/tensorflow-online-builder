@@ -61,6 +61,8 @@ import tensorList   from '../res/tensor.list.json'
 export default {
   name: 'Builder',
 
+  props: ['value'],
+
   components: {
     'v-input': Input,
     'v-tensor': Tensor,
@@ -114,6 +116,7 @@ export default {
 
       template.props.name.value = id.substring(0, 6)
       template.coord = {}
+      template.connect = { parents: 0, children: 0 }
 
       this.$set(this.$data.tensors, id, template)
     },
@@ -136,6 +139,9 @@ export default {
           },
         })
 
+        this.$data.tensors[this.$data.drawConn.o.hash].connect.children += 1
+        this.$data.tensors[this.$data.drawConn.i.hash].connect.parents += 1
+
         this.$data.drawConn.i = null
         this.$data.drawConn.o = null
       }
@@ -156,6 +162,8 @@ export default {
     },
 
     removePath(id) {
+      this.$data.tensors[this.$data.connections[id].i.hash].connect.parents -= 1
+      this.$data.tensors[this.$data.connections[id].o.hash].connect.children -= 1
       this.$delete(this.$data.connections, id)
     },
 
@@ -214,6 +222,49 @@ export default {
 
       this.$data.transform.prevX = rect.x
       this.$data.transform.prevY = rect.y
+    },
+
+  },
+
+  watch: {
+
+    connections: {
+      deep: true,
+      handler: function(val) {
+
+        let table = {}
+
+        for (const k in this.$data.tensors) {
+          table[k] = {
+            props: this.$data.tensors[k].props,
+            connect: this.$data.tensors[k].connect
+          }
+        }
+
+        this.$emit('input', {
+          connections: val,
+          tensors: table,
+        })
+      }
+    },
+
+    tensors: {
+      deep: true,
+      handler: function(val, oldVal) {
+        let table = {}
+
+        for (const k in val) {
+          table[k] = {
+            props: val[k].props,
+            connect: val[k].connect,
+          }
+        }
+
+        this.$emit('input', {
+          connections: this.$data.connections,
+          tensors: table,
+        })
+      }
     },
 
   },
