@@ -34,7 +34,7 @@
       :transform='transform',
       @clickPoint='drawConnection',
     )
-  sui-segment: sui-form
+  sui-segment.config-interface: sui-form
     sui-header(v-if='tensors[editTarget]') {{tensors[editTarget].function}}
     template(v-for='(p, k) in editTargetProps')
       v-dropdown(v-if='p.type == "dtype"', placeholder='Data Type', :options='dtype', :propName='k')
@@ -245,16 +245,10 @@ svg
   border: 4px solid rgba(0, 0, 0, .8)
   border-radius: 15px
 
-.fade-enter-active
-  transition: opacity .2s
-
-.fade-leave-active
-  transition: opacity .3s
-
-.fade-enter, .fade-leave-to
-  opacity: 0
-
 .menu
   font-size: 1.2rem
+
+.config-interface
+  overflow-y: auto
 
 </style>

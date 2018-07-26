@@ -2,8 +2,10 @@
   "Constant": {
     "props": {
       "name": { "value": "Const", "type": "string" },
+      "value": { "value": "", "type": "number" },
       "dtype": { "value": "float32", "type": "dtype" },
-      "shape": { "value": [], "type": "tuple" }
+      "shape": { "value": [], "type": "tuple" },
+      "verify_shape": { "value": false, "type": "boolean" }
     },
     "rect": {
       "height": 60,

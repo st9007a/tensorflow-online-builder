@@ -41,7 +41,7 @@ export default {
       const value = this.$store.state.editTargetProps[this.propName].value
 
       if (value.length == 0) {
-        return 'It is a scalar.'
+        return 'None'
       }
       return value.join(', ')
 
