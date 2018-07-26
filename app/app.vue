@@ -19,12 +19,11 @@
             sui-button(@click.native='exportPanel.open = false') Cancel
             sui-button-or
             sui-button(positive, @click.native='generateCode') Export
-  v-builder(v-model='graphStruct')
+  v-builder(ref='builder')
 </template>
 
 <script>
 import { cloneDeep } from 'lodash'
-import { Pool } from './lib/collection'
 import Builder from './components/builder.vue'
 export default {
   name: 'App',
@@ -55,46 +54,13 @@ export default {
   methods: {
 
     generateCode() {
-      const { tensors, connections } = cloneDeep(this.$data.graphStruct)
-      const entryNode = new Pool()
-      const stashPool = new Pool()
-      const sortedConnections = []
+      let { tensors, connections } = this.$refs.builder.$data
+      tensors = cloneDeep(tensors)
+      connections = cloneDeep(connections)
 
-      const pushConnectionByTensorId = (tensorId) => {
-        for (const k in connections) {
-          if (connections[k].o.hash === tensorId) {
-            sortedConnections.push(k)
+      Object.keys(tensors).forEach(tensorId => tensors[tensorId] = tensors[tensorId].props)
 
-            const nextTensorId = connections[k].i.hash
-
-            if (tensors[nextTensorId].connect.parents == 1) {
-              pushConnectionByTensorId(nextTensorId)
-            } else {
-              tensors[nextTensorId].connect.parents--
-            }
-
-            break
-          }
-        }
-      }
-
-      // Find all entry node
-      for (const id in tensors) {
-        if (tensors[id].connect.parents == 0) {
-          entryNode.add(id)
-        }
-      }
-
-      // Sort connections
-      while (!entryNode.isEmpty()) {
-        const tensorId = entryNode.pick()
-        entryNode.remove(tensorId)
-
-        pushConnectionByTensorId(tensorId)
-
-      }
-
-    },
+    }
 
   },
 }
