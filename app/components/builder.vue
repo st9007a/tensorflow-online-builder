@@ -165,6 +165,13 @@ export default {
 
     removeTensor(id) {
       this.$store.commit('unfocus')
+
+      for (const connId in this.$data.connections) {
+        if (this.connections[connId].i.hash == id || this.connections[connId].o.hash == id) {
+          this.removePath(connId)
+        }
+      }
+
       this.$delete(this.$data.tensors, id)
     },
 

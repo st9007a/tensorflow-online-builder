@@ -128,6 +128,11 @@ export default {
   methods: {
 
     fixFontPosition() {
+      // Prevent the vue bug: call updated hook after component destory
+      if (this.$refs.text === undefined) {
+        return
+      }
+
       let { width, height } = this.$refs.text.getBBox()
       this.$data.style.font.x = (this.width - width) / 2 + 2.5
       this.$data.style.font.y = (this.height - 10) / 2 + height / 2
