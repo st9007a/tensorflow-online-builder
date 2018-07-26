@@ -34,13 +34,15 @@
       :transform='transform',
       @clickPoint='drawConnection',
     )
-  sui-segment.config-interface: sui-form
-    sui-header(v-if='tensors[editTarget]') {{tensors[editTarget].function}}
-    template(v-for='(p, k) in editTargetProps')
-      v-dropdown(v-if='p.type == "dtype"', placeholder='Data Type', :options='dtype', :propName='k')
-      v-checkbox(v-else-if='p.type=="boolean"', :propName='k')
-      v-shape(v-else-if='p.type=="tuple"', :propName='k')
-      v-input(v-else, :propName='k')
+  sui-segment.config-interface
+    sui-form.form
+      sui-header(v-if='tensors[editTarget]') {{tensors[editTarget].function}}
+      template(v-for='(p, k) in editTargetProps')
+        v-dropdown(v-if='p.type == "dtype"', placeholder='Data Type', :options='dtype', :propName='k')
+        v-checkbox(v-else-if='p.type=="boolean"', :propName='k')
+        v-shape(v-else-if='p.type=="tuple"', :propName='k')
+        v-input(v-else, :propName='k')
+    sui-button.remove-btn(v-if='tensors[editTarget]', basic, negative, @click.native='removeTensor(editTarget)') Delete
 </template>
 
 <script>
@@ -161,6 +163,11 @@ export default {
       this.$delete(this.$data.connections, id)
     },
 
+    removeTensor(id) {
+      this.$store.commit('unfocus')
+      this.$delete(this.$data.tensors, id)
+    },
+
     toggle(idx) {
       this.$data.activeIdx = this.$data.activeIdx == idx ? -1 : idx
     },
@@ -249,6 +256,15 @@ svg
   font-size: 1.2rem
 
 .config-interface
+  display: flex
+  flex-direction: column
   overflow-y: auto
+
+  .form
+    flex: 1
+
+  .remove-btn
+    flex: 0 0 36px
+    margin-top: 3rem
 
 </style>
