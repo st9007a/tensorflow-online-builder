@@ -13,9 +13,9 @@ g.v-tensor(:transform='position')
     text(ref='text', v-bind='style.font', font-weight='bold') {{displayName}}
   text(x = -5, y = -5, font-weight='bold', font-size='18') {{tfFunction}}
   circle.in(
-    v-for='(n, idx) in inCount',
+    v-for='(n, idx) in inputs',
     cx='0',
-    :cy='posY(inCount, idx)',
+    :cy='posY(inputs.length, idx)',
     r='5',
     fill='white',
     stroke='black',
@@ -23,9 +23,9 @@ g.v-tensor(:transform='position')
     @click='clickPoint($event, "i", idx)',
   )
   circle.out(
-    v-for='(n, idx) in outCount',
+    v-for='(n, idx) in outputs',
     :cx='width',
-    :cy='posY(outCount, idx)',
+    :cy='posY(outputs.length, idx)',
     r='5',
     fill='white',
     stroke='black',
@@ -46,8 +46,8 @@ export default {
     'width',
     'value',
     'hash',
-    'inCount',
-    'outCount',
+    'inputs',
+    'outputs',
     'tfFunction',
     'transform',
   ],
@@ -102,12 +102,12 @@ export default {
   created() {
     this.$data.style.stroke.default.stroke = this.color.border
 
-    for (let i = 0; i < this.inCount; i++) {
-      this.$data.coord.i.push({ deltaX: 0, deltaY: this.posY(this.inCount, i) })
+    for (let i = 0; i < this.inputs.length; i++) {
+      this.$data.coord.i.push({ deltaX: 0, deltaY: this.posY(this.inputs.length, i) })
     }
 
-    for (let i = 0; i < this.outCount; i++) {
-      this.$data.coord.o.push({ deltaX: this.width, deltaY: this.posY(this.outCount, i) })
+    for (let i = 0; i < this.outputs.length; i++) {
+      this.$data.coord.o.push({ deltaX: this.width, deltaY: this.posY(this.outputs.length, i) })
     }
 
     for (const k in this.propstemplate) {

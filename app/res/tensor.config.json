@@ -16,8 +16,8 @@
       "fill": "#63b5b5"
     },
     "function": "tf.constant",
-    "inCount": 0,
-    "outCount": 1
+    "inputs": [],
+    "outputs": ["output"]
   },
   "Placeholder": {
     "props": {
@@ -34,8 +34,8 @@
       "fill": "#63b5b5"
     },
     "function": "tf.placeholder",
-    "inCount": 0,
-    "outCount": 1
+    "inputs": [],
+    "outputs": ["output"]
   },
   "Matmul": {
     "props": {
@@ -56,7 +56,7 @@
       "fill": "#ffba7e"
     },
     "function": "tf.matmul",
-    "inCount": 2,
-    "outCount": 1
+    "inputs": ["a", "b"],
+    "outputs": ["output"]
   }
 }
