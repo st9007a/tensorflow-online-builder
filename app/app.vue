@@ -58,7 +58,11 @@ export default {
       tensors = cloneDeep(tensors)
       connections = cloneDeep(connections)
 
-      Object.keys(tensors).forEach(tensorId => tensors[tensorId] = tensors[tensorId].props)
+      Object.keys(tensors).forEach(tensorId => tensors[tensorId] = {
+        props: tensors[tensorId].props,
+        inputs: tensors[tensorId].inCount,
+        outputs: tensors[tensorId].outCount,
+      })
 
     }
 
