@@ -60,8 +60,8 @@ export default {
 
       Object.keys(tensors).forEach(tensorId => tensors[tensorId] = {
         props: tensors[tensorId].props,
-        inputs: tensors[tensorId].inCount,
-        outputs: tensors[tensorId].outCount,
+        inputs: tensors[tensorId].inputs,
+        outputs: tensors[tensorId].outputs,
       })
 
     }
