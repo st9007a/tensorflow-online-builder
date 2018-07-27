@@ -20,17 +20,17 @@
       @dblclick='removePath(id)',
     )
     v-tensor(
-      v-for='(t, id) in tensors'
-      v-model='t.coord'
-      :key='id'
-      :hash='id'
-      :color='t.color'
-      :propstemplate='t.props'
-      :height='t.rect.height'
-      :width='t.rect.width'
-      :inCount='t.inCount'
-      :outCount='t.outCount'
-      :tfFunction='t.function'
+      v-for='(t, id) in tensors',
+      v-model='t.coord',
+      :key='id',
+      :hash='id',
+      :color='t.color',
+      :propstemplate='t.props',
+      :height='t.rect.height',
+      :width='t.rect.width',
+      :inputs='t.inputs',
+      :outputs='t.outputs',
+      :tfFunction='t.function',
       :transform='transform',
       @clickPoint='drawConnection',
     )
